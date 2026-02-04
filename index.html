@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>osu!mania judgement-maker (288x56 + @2x)</title>
+  <title>osu!mania judgement-maker (MASTER @2x)</title>
   <style>
     :root{
       --bg:#0b0c0f; --fg:#e8e8e8; --muted:#9aa0a6;
@@ -138,16 +138,10 @@
       color:var(--fg);
     }
 
-    .stage{
-      display:flex; flex-direction:column; gap:12px;
-      padding:12px;
-    }
-    .stageTop{
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-    }
+    .stage{display:flex; flex-direction:column; gap:12px; padding:12px;}
+    .stageTop{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
     .stageTop .left{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
     .stageTop .right{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
-
     .kbd{
       font-family:var(--mono);
       font-size:11px;
@@ -171,24 +165,22 @@
       padding:18px;
     }
 
-    /* preview: mostra o canvas em tamanho confortável */
+    /* Preview usa o canvas @2x mas exibido grande via CSS */
     canvas{
       display:block;
       width:100%;
-      max-width: 720px;
+      max-width: 900px;
       height:auto;
-      margin: 0 auto;
-      image-rendering:auto;
+      margin:0 auto;
       border-radius:14px;
-      background: transparent;
+      background:transparent;
+      image-rendering:auto;
     }
 
     .divider{height:1px; background:var(--border); margin:10px 0}
 
     .toast{
-      position:fixed;
-      right:14px;
-      bottom:14px;
+      position:fixed; right:14px; bottom:14px;
       padding:10px 12px;
       border-radius:12px;
       border:1px solid var(--border);
@@ -204,855 +196,743 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>judgement-maker</h1>
-    <span class="hint">Export fixo: 288×56 + 576×112 (@2x). Ícones simples embutidos.</span>
-  </header>
+<header>
+  <h1>judgement-maker</h1>
+  <span class="hint">Master sempre em @2x (576×112). Normal (288×56) é downscale do master (melhor qualidade).</span>
+</header>
 
-  <div class="wrap">
-    <!-- LEFT -->
-    <section class="card">
-      <div class="title">
-        <strong>Config</strong>
-        <span class="pill" id="statusPill">pronto</span>
+<div class="wrap">
+  <section class="card">
+    <div class="title">
+      <strong>Config</strong>
+      <span class="pill" id="statusPill">pronto</span>
+    </div>
+
+    <div class="tabs" id="tabs"></div>
+
+    <div class="content">
+      <div class="field">
+        <label>Texto do judgement (só deste selecionado)</label>
+        <input id="txt" type="text" value="300" />
       </div>
 
-      <div class="tabs" id="tabs"></div>
-
-      <div class="content">
+      <div class="row">
         <div class="field">
-          <label>Texto do judgement (só deste selecionado)</label>
-          <input id="txt" type="text" value="300" />
+          <label>Fonte (nome)</label>
+          <input id="fontName" type="text" value="Arial Black" />
         </div>
-
-        <div class="row">
-          <div class="field">
-            <label>Fonte (nome)</label>
-            <input id="fontName" type="text" value="Arial Black" />
-          </div>
-          <div class="field">
-            <label>Upload de fonte (.ttf/.otf)</label>
-            <input id="fontFile" type="file" accept=".ttf,.otf" />
-          </div>
-        </div>
-
-        <div class="row3">
-          <div class="field">
-            <label>Tamanho (px) — base 288×56</label>
-            <input id="fontSize" type="number" value="34" min="1" step="1" />
-          </div>
-          <div class="field">
-            <label>Tracking</label>
-            <input id="tracking" type="number" value="0" step="0.5" />
-          </div>
-          <div class="field">
-            <label>Inclinação (°)</label>
-            <input id="skewDeg" type="number" value="0" step="0.5" />
-          </div>
-        </div>
-
-        <div class="row3">
-          <div class="field">
-            <label>Cor do texto</label>
-            <input id="fill" type="color" value="#ffffff" />
-          </div>
-          <div class="field">
-            <label>Outline (px)</label>
-            <input id="strokeW" type="number" value="4" min="0" step="1" />
-          </div>
-          <div class="field">
-            <label>Cor do outline</label>
-            <input id="stroke" type="color" value="#000000" />
-          </div>
-        </div>
-
-        <div class="row3">
-          <div class="field">
-            <label>Sombra (blur)</label>
-            <input id="shadowBlur" type="number" value="0" min="0" step="1" />
-          </div>
-          <div class="field">
-            <label>Sombra X</label>
-            <input id="shadowX" type="number" value="0" step="1" />
-          </div>
-          <div class="field">
-            <label>Sombra Y</label>
-            <input id="shadowY" type="number" value="0" step="1" />
-          </div>
-        </div>
-
-        <div class="row3">
-          <div class="field">
-            <label>Cor da sombra</label>
-            <input id="shadowColor" type="color" value="#000000" />
-          </div>
-          <div class="field">
-            <label>Glow (blur)</label>
-            <input id="glowBlur" type="number" value="10" min="0" step="1" />
-          </div>
-          <div class="field">
-            <label>Cor do glow</label>
-            <input id="glowColor" type="color" value="#7c5cff" />
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="row3">
-          <div class="field">
-            <label>Offset X (este judgement)</label>
-            <input id="offX" type="number" value="0" step="1" />
-          </div>
-          <div class="field">
-            <label>Offset Y (este judgement)</label>
-            <input id="offY" type="number" value="0" step="1" />
-          </div>
-          <div class="field">
-            <label>Alpha (este judgement)</label>
-            <input id="alpha" type="number" value="1" min="0" max="1" step="0.05" />
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
         <div class="field">
-          <label>Ícone (embutido) — só deste judgement</label>
-          <select id="iconPick"></select>
+          <label>Upload de fonte (.ttf/.otf)</label>
+          <input id="fontFile" type="file" accept=".ttf,.otf" />
         </div>
-
-        <div class="row3">
-          <div class="field">
-            <label>Ícone escala</label>
-            <input id="iconScale" type="number" value="1" min="0" step="0.05" />
-          </div>
-          <div class="field">
-            <label>Ícone offset X</label>
-            <input id="iconX" type="number" value="0" step="1" />
-          </div>
-          <div class="field">
-            <label>Ícone offset Y</label>
-            <input id="iconY" type="number" value="0" step="1" />
-          </div>
-        </div>
-
-        <div class="row3">
-          <div class="field">
-            <label>Ícone atrás do texto?</label>
-            <select id="iconBehind">
-              <option value="yes" selected>Sim</option>
-              <option value="no">Não</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Cor do ícone</label>
-            <input id="iconColor" type="color" value="#ffffff" />
-          </div>
-          <div class="field">
-            <label>Limpar ícone</label>
-            <button class="danger" id="clearIcon" type="button">Limpar</button>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="btns">
-          <button id="downloadOne" type="button">Baixar (selecionado + @2x)</button>
-          <button id="exportAll" type="button">Exportar 12 PNGs</button>
-          <button id="reset" class="secondary" type="button">Reset</button>
-        </div>
-
-        <p class="small">
-          Export fixo: <b>288×56</b> e <b>576×112</b> (@2x).<br/>
-          Arraste no preview = move offset do texto. Shift+arraste = move ícone.
-        </p>
       </div>
-    </section>
 
-    <!-- RIGHT -->
-    <section class="card">
-      <div class="title">
-        <strong>Preview</strong>
+      <div class="row3">
+        <div class="field">
+          <label>Tamanho (px) — base em 288×56</label>
+          <input id="fontSize" type="number" value="34" min="1" step="1" />
+        </div>
+        <div class="field">
+          <label>Tracking</label>
+          <input id="tracking" type="number" value="0" step="0.5" />
+        </div>
+        <div class="field">
+          <label>Inclinação (°)</label>
+          <input id="skewDeg" type="number" value="0" step="0.5" />
+        </div>
+      </div>
+
+      <div class="row3">
+        <div class="field">
+          <label>Cor do texto</label>
+          <input id="fill" type="color" value="#ffffff" />
+        </div>
+        <div class="field">
+          <label>Outline (px)</label>
+          <input id="strokeW" type="number" value="4" min="0" step="1" />
+        </div>
+        <div class="field">
+          <label>Cor do outline</label>
+          <input id="stroke" type="color" value="#000000" />
+        </div>
+      </div>
+
+      <div class="row3">
+        <div class="field">
+          <label>Sombra (blur)</label>
+          <input id="shadowBlur" type="number" value="0" min="0" step="1" />
+        </div>
+        <div class="field">
+          <label>Sombra X</label>
+          <input id="shadowX" type="number" value="0" step="1" />
+        </div>
+        <div class="field">
+          <label>Sombra Y</label>
+          <input id="shadowY" type="number" value="0" step="1" />
+        </div>
+      </div>
+
+      <div class="row3">
+        <div class="field">
+          <label>Cor da sombra</label>
+          <input id="shadowColor" type="color" value="#000000" />
+        </div>
+        <div class="field">
+          <label>Glow (blur)</label>
+          <input id="glowBlur" type="number" value="10" min="0" step="1" />
+        </div>
+        <div class="field">
+          <label>Cor do glow</label>
+          <input id="glowColor" type="color" value="#7c5cff" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row3">
+        <div class="field">
+          <label>Offset X (este judgement)</label>
+          <input id="offX" type="number" value="0" step="1" />
+        </div>
+        <div class="field">
+          <label>Offset Y (este judgement)</label>
+          <input id="offY" type="number" value="0" step="1" />
+        </div>
+        <div class="field">
+          <label>Alpha (este judgement)</label>
+          <input id="alpha" type="number" value="1" min="0" max="1" step="0.05" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label>Ícone (embutido) — só deste judgement</label>
+        <select id="iconPick"></select>
+      </div>
+
+      <div class="row3">
+        <div class="field">
+          <label>Ícone escala</label>
+          <input id="iconScale" type="number" value="1" min="0" step="0.05" />
+        </div>
+        <div class="field">
+          <label>Ícone offset X</label>
+          <input id="iconX" type="number" value="0" step="1" />
+        </div>
+        <div class="field">
+          <label>Ícone offset Y</label>
+          <input id="iconY" type="number" value="0" step="1" />
+        </div>
+      </div>
+
+      <div class="row3">
+        <div class="field">
+          <label>Ícone atrás do texto?</label>
+          <select id="iconBehind">
+            <option value="yes" selected>Sim</option>
+            <option value="no">Não</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Cor do ícone</label>
+          <input id="iconColor" type="color" value="#ffffff" />
+        </div>
+        <div class="field">
+          <label>Limpar ícone</label>
+          <button class="danger" id="clearIcon" type="button">Limpar</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="btns">
+        <button id="downloadOne" type="button">Baixar (selecionado + @2x)</button>
+        <button id="exportAll" type="button">Exportar 12 PNGs</button>
+        <button id="reset" class="secondary" type="button">Reset</button>
+      </div>
+
+      <p class="small">
+        Master: <b>576×112</b> (@2x). Normal: <b>288×56</b> (downscale do master).<br/>
+        Arraste no preview = move texto. Shift+arraste = move ícone.
+      </p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="title">
+      <strong>Preview</strong>
+      <div class="right">
+        <span class="kbd">Arraste = texto</span>
+        <span class="kbd">Shift+arraste = ícone</span>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stageTop">
+        <div class="left">
+          <span class="pill" id="dimPill">576×112 (preview)</span>
+          <span class="pill" id="fontPill">fonte: Arial Black</span>
+          <span class="pill" id="whichPill">editando: 300</span>
+        </div>
         <div class="right">
-          <span class="kbd">Arraste = texto</span>
-          <span class="kbd">Shift+arraste = ícone</span>
+          <button id="toggleGuides" class="secondary" type="button">Guias: ON</button>
+          <button id="toggleBG" class="secondary" type="button">Fundo preview</button>
         </div>
       </div>
 
-      <div class="stage">
-        <div class="stageTop">
-          <div class="left">
-            <span class="pill" id="dimPill">288×56 + @2x</span>
-            <span class="pill" id="fontPill">fonte: Arial Black</span>
-            <span class="pill" id="whichPill">editando: 300</span>
-          </div>
-          <div class="right">
-            <button id="toggleGuides" class="secondary" type="button">Guias: ON</button>
-            <button id="toggleBG" class="secondary" type="button">Fundo preview</button>
-          </div>
-        </div>
-
-        <div class="canvasWrap" id="canvasWrap">
-          <canvas id="c"></canvas>
-        </div>
-
-        <p class="small">
-          O PNG exportado sai com <b>fundo transparente</b>. O xadrez é só preview.
-        </p>
+      <div class="canvasWrap" id="canvasWrap">
+        <canvas id="c"></canvas>
       </div>
-    </section>
-  </div>
 
-  <div class="toast" id="toast"></div>
+      <p class="small">Export sai com <b>fundo transparente</b>. Xadrez é só preview.</p>
+    </div>
+  </section>
+</div>
 
-  <script>
-    // ========= helpers =========
-    const $ = (id) => document.getElementById(id);
-    const toast = (msg) => {
-      const t = $("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      clearTimeout(toast._tm);
-      toast._tm = setTimeout(()=>t.classList.remove("show"), 1600);
+<div class="toast" id="toast"></div>
+
+<script>
+  const $ = (id)=>document.getElementById(id);
+  const toast = (msg)=>{
+    const t=$("toast");
+    t.textContent=msg; t.classList.add("show");
+    clearTimeout(toast._tm);
+    toast._tm=setTimeout(()=>t.classList.remove("show"),1600);
+  };
+  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
+  const sanitizeName=(s)=> (s||"judgement").toString().trim()
+    .replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g,"_").slice(0,80) || "judgement";
+
+  // FIXO
+  const BASE_W=288, BASE_H=56;
+  const MASTER_SCALE=2; // master sempre @2x
+  const MASTER_W=BASE_W*MASTER_SCALE, MASTER_H=BASE_H*MASTER_SCALE;
+
+  // ÍCONES (SVG)
+  const ICONS=[
+    {id:"none",name:"Nenhum",svg:""},
+    {id:"star",name:"⭐ Star",svg:`<path d="M50 6 L62 36 L94 38 L69 58 L77 90 L50 73 L23 90 L31 58 L6 38 L38 36 Z"/>`},
+    {id:"diamond",name:"◆ Diamond",svg:`<path d="M50 6 L92 50 L50 94 L8 50 Z"/>`},
+    {id:"circle",name:"● Circle",svg:`<circle cx="50" cy="50" r="38"/>`},
+    {id:"triangle",name:"▲ Triangle",svg:`<path d="M50 10 L92 86 L8 86 Z"/>`},
+    {id:"crown",name:"👑 Crown",svg:`<path d="M12 72 L18 28 L36 48 L50 22 L64 48 L82 28 L88 72 Z"/><rect x="16" y="72" width="68" height="16" rx="4"/>`},
+    {id:"bolt",name:"⚡ Bolt",svg:`<path d="M58 6 L18 58 L46 58 L40 94 L82 40 L54 40 Z"/>`},
+    {id:"heart",name:"♥ Heart",svg:`<path d="M50 88 C20 66 12 52 12 38 C12 25 21 16 34 16 C42 16 48 20 50 24 C52 20 58 16 66 16 C79 16 88 25 88 38 C88 52 80 66 50 88 Z"/>`},
+    {id:"x",name:"✖ X",svg:`<path d="M22 18 L50 46 L78 18 L90 30 L62 58 L90 86 L78 98 L50 70 L22 98 L10 86 L38 58 L10 30 Z"/>`},
+    {id:"plus",name:"＋ Plus",svg:`<path d="M44 12 H56 V44 H88 V56 H56 V88 H44 V56 H12 V44 H44 Z"/>`},
+    {id:"bang",name:"❗ Exclam",svg:`<rect x="44" y="10" width="12" height="58" rx="6"/><circle cx="50" cy="80" r="8"/>`}
+  ];
+
+  function makeSvgDataUrl(iconId,color){
+    const icon=ICONS.find(x=>x.id===iconId);
+    if(!icon||!icon.svg) return null;
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="${color}">${icon.svg}</g></svg>`;
+    const encoded=encodeURIComponent(svg).replace(/'/g,"%27").replace(/"/g,"%22");
+    return `data:image/svg+xml;charset=utf-8,${encoded}`;
+  }
+  const iconImgCache=new Map();
+  async function getIconImage(iconId,color){
+    if(!iconId||iconId==="none") return null;
+    const key=`${iconId}|${color}`;
+    if(iconImgCache.has(key)) return iconImgCache.get(key);
+    const url=makeSvgDataUrl(iconId,color);
+    if(!url) return null;
+    const img=new Image(); img.decoding="async";
+    const p=new Promise((res,rej)=>{img.onload=()=>res(img); img.onerror=rej;});
+    img.src=url;
+    const loaded=await p;
+    iconImgCache.set(key,loaded);
+    return loaded;
+  }
+
+  // estilo (em unidades base 288x56)
+  const shared={
+    fontName:"Arial Black",
+    fontSize:34,
+    tracking:0,
+    skewDeg:0,
+    fill:"#ffffff",
+    strokeW:4,
+    stroke:"#000000",
+    shadowBlur:0,
+    shadowX:0,
+    shadowY:0,
+    shadowColor:"#000000",
+    glowBlur:10,
+    glowColor:"#7c5cff",
+    guides:true,
+    previewBG:false
+  };
+
+  // por judgement
+  const keys=["0","50","100","200","300","300g"];
+  const per={};
+  for(const k of keys){
+    per[k]={
+      text:k, alpha:1, offX:0, offY:0,
+      iconId:"none", iconColor:"#ffffff",
+      iconScale:1, iconX:0, iconY:0,
+      iconBehind:true
     };
-    const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
-    const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
-    const sanitizeName = (s)=> (s||"judgement").toString().trim()
-      .replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g,"_").slice(0,80) || "judgement";
+  }
+  let active="300";
 
-    // ========= Fixed export sizes =========
-    const BASE_W = 288, BASE_H = 56;
+  // canvas principal (preview) = master @2x
+  const canvas=$("c");
+  const ctx=canvas.getContext("2d");
 
-    // ========= Simple built-in icons (SVG paths) =========
-    // viewBox 0 0 100 100, fill = currentColor
-    const ICONS = [
-      { id: "none",  name: "Nenhum", svg: "" },
+  // canvases offscreen pro export (master + downscale)
+  const masterCanvas=document.createElement("canvas");
+  const masterCtx=masterCanvas.getContext("2d");
+  const downCanvas=document.createElement("canvas");
+  const downCtx=downCanvas.getContext("2d");
 
-      { id: "star",  name: "⭐ Star", svg:
-        `<path d="M50 6 L62 36 L94 38 L69 58 L77 90 L50 73 L23 90 L31 58 L6 38 L38 36 Z"/>`
-      },
+  function setupMasterContext(c, scale){
+    c.font = `${shared.fontSize*scale}px "${shared.fontName}"`;
+    c.textAlign="center";
+    c.textBaseline="alphabetic";
+    c.lineJoin="round";
+    c.lineCap="round";
+  }
 
-      { id: "diamond", name: "◆ Diamond", svg:
-        `<path d="M50 6 L92 50 L50 94 L8 50 Z"/>`
-      },
+  function clearCtx(c, W, H){
+    c.clearRect(0,0,W,H);
+    if(shared.previewBG){
+      c.save();
+      c.fillStyle="rgba(0,0,0,.35)";
+      c.fillRect(0,0,W,H);
+      c.restore();
+    }
+  }
 
-      { id: "circle", name: "● Circle", svg:
-        `<circle cx="50" cy="50" r="38"/>`
-      },
+  function drawGuidesOn(c, W, H, scale){
+    if(!shared.guides) return;
+    c.save();
+    c.globalAlpha=0.55;
+    c.lineWidth=Math.max(1,scale);
+    c.beginPath();
+    c.moveTo(W/2,0); c.lineTo(W/2,H);
+    c.moveTo(0,H/2); c.lineTo(W,H/2);
+    c.strokeStyle="rgba(255,255,255,.25)";
+    c.stroke();
+    const pad=6*scale;
+    c.strokeStyle="rgba(124,92,255,.35)";
+    c.strokeRect(pad,pad,W-pad*2,H-pad*2);
+    c.restore();
+  }
 
-      { id: "triangle", name: "▲ Triangle", svg:
-        `<path d="M50 10 L92 86 L8 86 Z"/>`
-      },
+  function measureBoxWith(c, text){
+    const m=c.measureText(text);
+    const ascent=(m.actualBoundingBoxAscent ?? m.fontBoundingBoxAscent ?? (shared.fontSize*0.8));
+    const descent=(m.actualBoundingBoxDescent ?? m.fontBoundingBoxDescent ?? (shared.fontSize*0.2));
+    return {ascent,descent};
+  }
 
-      { id: "crown", name: "👑 Crown", svg:
-        `<path d="M12 72 L18 28 L36 48 L50 22 L64 48 L82 28 L88 72 Z"/><rect x="16" y="72" width="68" height="16" rx="4"/>`
-      },
+  function drawTextWithTracking(c, text, x, y, tracking, strokeOnly, fillOnly){
+    if(!text) return;
+    if(!tracking){
+      if(strokeOnly) c.strokeText(text,x,y);
+      if(fillOnly) c.fillText(text,x,y);
+      return;
+    }
+    const chars=[...text];
+    const widths=chars.map(ch=>c.measureText(ch).width);
+    const total=widths.reduce((a,b)=>a+b,0)+tracking*(chars.length-1);
+    let startX=x-total/2;
+    for(let i=0;i<chars.length;i++){
+      const cx=startX+widths[i]/2;
+      if(strokeOnly) c.strokeText(chars[i],cx,y);
+      if(fillOnly) c.fillText(chars[i],cx,y);
+      startX += widths[i] + tracking;
+    }
+  }
 
-      { id: "bolt", name: "⚡ Bolt", svg:
-        `<path d="M58 6 L18 58 L46 58 L40 94 L82 40 L54 40 Z"/>`
-      },
+  async function drawIcon(c, centerX, centerY, scale, jd){
+    if(!jd.iconId || jd.iconId==="none") return;
+    const img=await getIconImage(jd.iconId, jd.iconColor);
+    if(!img) return;
+    const ICON_BASE_PX=36; // em px do 288x56
+    const px=ICON_BASE_PX*jd.iconScale*scale;
+    const x=centerX - px/2 + (jd.iconX*scale);
+    const y=centerY - px/2 + (jd.iconY*scale);
+    c.save();
+    c.globalAlpha=clamp(jd.alpha,0,1);
+    c.imageSmoothingEnabled=true;
+    c.drawImage(img,x,y,px,px);
+    c.restore();
+  }
 
-      { id: "heart", name: "♥ Heart", svg:
-        `<path d="M50 88 C20 66 12 52 12 38 C12 25 21 16 34 16 C42 16 48 20 50 24 C52 20 58 16 66 16 C79 16 88 25 88 38 C88 52 80 66 50 88 Z"/>`
-      },
+  async function drawJudgementOn(c, W, H, scale, key){
+    const jd=per[key];
+    setupMasterContext(c, scale);
 
-      { id: "x", name: "✖ X", svg:
-        `<path d="M22 18 L50 46 L78 18 L90 30 L62 58 L90 86 L78 98 L50 70 L22 98 L10 86 L38 58 L10 30 Z"/>`
-      },
+    const centerX = W/2 + (jd.offX*scale);
+    const centerY = H/2 + (jd.offY*scale);
 
-      { id: "plus", name: "＋ Plus", svg:
-        `<path d="M44 12 H56 V44 H88 V56 H56 V88 H44 V56 H12 V44 H44 Z"/>`
-      },
+    const text=jd.text ?? "";
+    const tracking=(Number(shared.tracking||0) * scale);
+    const fontSize=shared.fontSize*scale;
 
-      { id: "bang", name: "❗ Exclam", svg:
-        `<rect x="44" y="10" width="12" height="58" rx="6"/><circle cx="50" cy="80" r="8"/>`
-      }
-    ];
+    // skew
+    const skew=Math.tan((Number(shared.skewDeg)||0)*Math.PI/180);
 
-    function makeSvgDataUrl(iconId, color){
-      const icon = ICONS.find(x=>x.id===iconId);
-      if(!icon || !icon.svg) return null;
+    // medir “centro real”
+    c.save();
+    c.font = `${fontSize}px "${shared.fontName}"`;
+    const box=measureBoxWith(c, text);
+    c.restore();
+    const baselineToMiddle=(box.ascent - box.descent)/2;
+    const x0=centerX;
+    const y0=centerY + baselineToMiddle;
 
-      const svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-          <g fill="${color}">${icon.svg}</g>
-        </svg>
-      `.trim();
+    if(jd.iconBehind) await drawIcon(c, centerX, centerY, scale, jd);
 
-      const encoded = encodeURIComponent(svg)
-        .replace(/'/g,"%27").replace(/"/g,"%22");
-      return `data:image/svg+xml;charset=utf-8,${encoded}`;
+    c.save();
+    c.globalAlpha=clamp(jd.alpha,0,1);
+    c.font = `${fontSize}px "${shared.fontName}"`;
+    c.textAlign="center";
+    c.textBaseline="alphabetic";
+
+    // aplica skew no contexto (mantém coordenadas)
+    c.transform(1, 0, skew, 1, 0, 0);
+
+    // glow
+    if(Number(shared.glowBlur)>0){
+      c.save();
+      c.shadowBlur=Number(shared.glowBlur)*scale;
+      c.shadowColor=shared.glowColor;
+      c.fillStyle=shared.fill;
+      drawTextWithTracking(c, text, x0, y0, tracking, false, true);
+      c.restore();
     }
 
-    const iconImgCache = new Map(); // key = `${id}|${color}`
-    async function getIconImage(iconId, color){
-      if(iconId === "none") return null;
-      const key = `${iconId}|${color}`;
-      if(iconImgCache.has(key)) return iconImgCache.get(key);
-
-      const url = makeSvgDataUrl(iconId, color);
-      if(!url) return null;
-
-      const img = new Image();
-      img.decoding = "async";
-      const p = new Promise((resolve, reject)=>{
-        img.onload = ()=>resolve(img);
-        img.onerror = reject;
-      });
-      img.src = url;
-      const loaded = await p;
-      iconImgCache.set(key, loaded);
-      return loaded;
+    // shadow
+    if(Number(shared.shadowBlur)>0 || Number(shared.shadowX)!==0 || Number(shared.shadowY)!==0){
+      c.save();
+      c.shadowBlur=Number(shared.shadowBlur)*scale;
+      c.shadowColor=shared.shadowColor;
+      c.shadowOffsetX=Number(shared.shadowX)*scale;
+      c.shadowOffsetY=Number(shared.shadowY)*scale;
+      c.fillStyle=shared.fill;
+      drawTextWithTracking(c, text, x0, y0, tracking, false, true);
+      c.restore();
     }
 
-    // ========= Shared style (base units for 288x56) =========
-    const shared = {
-      fontName: "Arial Black",
-      fontSize: 34,
-      tracking: 0,
-      skewDeg: 0,
+    // outline
+    if(Number(shared.strokeW)>0){
+      c.lineWidth=Number(shared.strokeW)*scale;
+      c.strokeStyle=shared.stroke;
+      drawTextWithTracking(c, text, x0, y0, tracking, true, false);
+    }
 
-      fill: "#ffffff",
-      strokeW: 4,
-      stroke: "#000000",
+    // fill
+    c.fillStyle=shared.fill;
+    drawTextWithTracking(c, text, x0, y0, tracking, false, true);
 
-      shadowBlur: 0,
-      shadowX: 0,
-      shadowY: 0,
-      shadowColor: "#000000",
+    c.restore();
 
-      glowBlur: 10,
-      glowColor: "#7c5cff",
+    if(!jd.iconBehind) await drawIcon(c, centerX, centerY, scale, jd);
+  }
 
-      guides: true,
-      previewBG: false
-    };
+  async function renderPreview(){
+    canvas.width=MASTER_W;
+    canvas.height=MASTER_H;
+    clearCtx(ctx, MASTER_W, MASTER_H);
+    await drawJudgementOn(ctx, MASTER_W, MASTER_H, MASTER_SCALE, active);
+    drawGuidesOn(ctx, MASTER_W, MASTER_H, MASTER_SCALE);
+    $("fontPill").textContent=`fonte: ${shared.fontName}`;
+    $("whichPill").textContent=`editando: ${active}`;
+  }
 
-    // ========= Per-judgement =========
-    const keys = ["0","50","100","200","300","300g"];
-    const per = {};
+  function canvasToBlob(cnv){
+    return new Promise((resolve)=> cnv.toBlob(b=>resolve(b), "image/png"));
+  }
+
+  // Render MASTER (@2x) para um key
+  async function renderMasterToCanvas(key){
+    masterCanvas.width=MASTER_W;
+    masterCanvas.height=MASTER_H;
+    clearCtx(masterCtx, MASTER_W, MASTER_H);
+    await drawJudgementOn(masterCtx, MASTER_W, MASTER_H, MASTER_SCALE, key);
+    return masterCanvas;
+  }
+
+  // Downscale MASTER -> normal 288x56
+  async function renderNormalFromMaster(master){
+    downCanvas.width=BASE_W;
+    downCanvas.height=BASE_H;
+    downCtx.clearRect(0,0,BASE_W,BASE_H);
+    downCtx.imageSmoothingEnabled=true;
+    downCtx.imageSmoothingQuality="high";
+    downCtx.drawImage(master, 0,0, MASTER_W,MASTER_H, 0,0, BASE_W,BASE_H);
+    return downCanvas;
+  }
+
+  function downloadBlob(blob, filename){
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download=filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 200);
+  }
+
+  // Tabs
+  function buildTabs(){
+    const root=$("tabs");
+    root.innerHTML="";
     for(const k of keys){
-      per[k] = {
-        text: k,
-        alpha: 1,
-        offX: 0,
-        offY: 0,
-
-        iconId: "none",
-        iconColor: "#ffffff",
-        iconScale: 1,
-        iconX: 0,
-        iconY: 0,
-        iconBehind: true
-      };
-    }
-    let active = "300";
-
-    // ========= Canvas =========
-    const canvas = $("c");
-    const ctx = canvas.getContext("2d");
-
-    function clear(scale){
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      if(shared.previewBG){
-        ctx.save();
-        ctx.fillStyle = "rgba(0,0,0,.35)";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.restore();
-      }
-    }
-
-    function drawGuides(scale){
-      if(!shared.guides) return;
-      const W = canvas.width, H = canvas.height;
-      ctx.save();
-      ctx.globalAlpha = 0.55;
-      ctx.lineWidth = Math.max(1, scale);
-      ctx.beginPath();
-      ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H);
-      ctx.moveTo(0, H/2); ctx.lineTo(W, H/2);
-      ctx.strokeStyle = "rgba(255,255,255,.25)";
-      ctx.stroke();
-
-      const pad = 6 * scale;
-      ctx.strokeStyle = "rgba(124,92,255,.35)";
-      ctx.strokeRect(pad, pad, W - pad*2, H - pad*2);
-      ctx.restore();
-    }
-
-    function measureTextBox(text, font){
-      ctx.save();
-      ctx.font = font;
-      const m = ctx.measureText(text);
-      const ascent  = (m.actualBoundingBoxAscent ?? m.fontBoundingBoxAscent ?? (shared.fontSize * 0.8));
-      const descent = (m.actualBoundingBoxDescent ?? m.fontBoundingBoxDescent ?? (shared.fontSize * 0.2));
-      ctx.restore();
-      return { ascent, descent };
-    }
-
-    function drawTextWithTracking(text, x, y, tracking, strokeOnly, fillOnly){
-      if(!text) return;
-      if(!tracking){
-        if(strokeOnly) ctx.strokeText(text, x, y);
-        if(fillOnly) ctx.fillText(text, x, y);
-        return;
-      }
-      const chars = [...text];
-      const widths = chars.map(ch => ctx.measureText(ch).width);
-      const total = widths.reduce((a,b)=>a+b,0) + tracking*(chars.length-1);
-      let startX = x - total/2;
-      for(let i=0;i<chars.length;i++){
-        const cx = startX + widths[i]/2;
-        if(strokeOnly) ctx.strokeText(chars[i], cx, y);
-        if(fillOnly) ctx.fillText(chars[i], cx, y);
-        startX += widths[i] + tracking;
-      }
-    }
-
-    async function drawIcon(centerX, centerY, scale, jd){
-      if(!jd.iconId || jd.iconId==="none") return;
-
-      const img = await getIconImage(jd.iconId, jd.iconColor);
-      if(!img) return;
-
-      // tamanho base do ícone (em px no 288x56), você pode mudar se quiser
-      const ICON_BASE_PX = 36;
-
-      const px = ICON_BASE_PX * jd.iconScale * scale;
-      const x = centerX - px/2 + (jd.iconX * scale);
-      const y = centerY - px/2 + (jd.iconY * scale);
-
-      ctx.save();
-      ctx.globalAlpha = clamp(jd.alpha,0,1);
-      ctx.imageSmoothingEnabled = true;
-      ctx.drawImage(img, x, y, px, px);
-      ctx.restore();
-    }
-
-    async function drawJudgement(scale, jKey){
-      const jd = per[jKey];
-      const W = canvas.width, H = canvas.height;
-
-      // pivot (centro) + offsets por judgement
-      const centerX = W/2 + (jd.offX * scale);
-      const centerY = H/2 + (jd.offY * scale);
-
-      const size = shared.fontSize * scale;
-      const font = `${size}px "${shared.fontName}"`;
-      const tracking = Number(shared.tracking || 0) * scale;
-      const text = jd.text ?? "";
-
-      // centralização real
-      const box = measureTextBox(text, font);
-      const baselineToMiddle = (box.ascent - box.descent) / 2;
-      const x0 = centerX;
-      const y0 = centerY + baselineToMiddle;
-
-      // ícone atrás?
-      if(jd.iconBehind) await drawIcon(centerX, centerY, scale, jd);
-
-      ctx.save();
-      ctx.globalAlpha = clamp(jd.alpha,0,1);
-      ctx.font = font;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "alphabetic";
-
-      // skew
-      const skew = Math.tan((Number(shared.skewDeg)||0) * Math.PI/180);
-      ctx.transform(1, 0, skew, 1, 0, 0);
-
-      // glow
-      if(Number(shared.glowBlur) > 0){
-        ctx.save();
-        ctx.shadowBlur = Number(shared.glowBlur) * scale;
-        ctx.shadowColor = shared.glowColor;
-        ctx.fillStyle = shared.fill;
-        drawTextWithTracking(text, x0, y0, tracking, false, true);
-        ctx.restore();
-      }
-
-      // shadow
-      if(Number(shared.shadowBlur) > 0 || Number(shared.shadowX) !== 0 || Number(shared.shadowY) !== 0){
-        ctx.save();
-        ctx.shadowBlur = Number(shared.shadowBlur) * scale;
-        ctx.shadowColor = shared.shadowColor;
-        ctx.shadowOffsetX = Number(shared.shadowX) * scale;
-        ctx.shadowOffsetY = Number(shared.shadowY) * scale;
-        ctx.fillStyle = shared.fill;
-        drawTextWithTracking(text, x0, y0, tracking, false, true);
-        ctx.restore();
-      }
-
-      // outline
-      if(Number(shared.strokeW) > 0){
-        ctx.lineJoin = "round";
-        ctx.lineCap = "round";
-        ctx.lineWidth = Number(shared.strokeW) * scale;
-        ctx.strokeStyle = shared.stroke;
-        drawTextWithTracking(text, x0, y0, tracking, true, false);
-      }
-
-      // fill
-      ctx.fillStyle = shared.fill;
-      drawTextWithTracking(text, x0, y0, tracking, false, true);
-
-      ctx.restore();
-
-      // ícone na frente?
-      if(!jd.iconBehind) await drawIcon(centerX, centerY, scale, jd);
-    }
-
-    async function renderPreview(){
-      // preview sempre em tamanho base (288x56), mas a caixa da UI amplia o canvas via CSS
-      canvas.width = BASE_W;
-      canvas.height = BASE_H;
-
-      clear(1);
-      await drawJudgement(1, active);
-      drawGuides(1);
-
-      $("fontPill").textContent = `fonte: ${shared.fontName}`;
-      $("whichPill").textContent = `editando: ${active}`;
-    }
-
-    async function renderToSizeAndGetBlob(targetScale){
-      const w = BASE_W * targetScale;
-      const h = BASE_H * targetScale;
-
-      canvas.width = w;
-      canvas.height = h;
-
-      clear(targetScale);
-      await drawJudgement(targetScale, active);
-
-      return new Promise((resolve)=> canvas.toBlob(b=>resolve(b), "image/png"));
-    }
-
-    async function renderKeyToBlob(key, targetScale){
-      const w = BASE_W * targetScale;
-      const h = BASE_H * targetScale;
-
-      canvas.width = w;
-      canvas.height = h;
-
-      clear(targetScale);
-      await drawJudgement(targetScale, key);
-
-      return new Promise((resolve)=> canvas.toBlob(b=>resolve(b), "image/png"));
-    }
-
-    function downloadBlob(blob, filename){
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(()=>{
-        URL.revokeObjectURL(a.href);
-        a.remove();
-      }, 200);
-    }
-
-    // ========= Tabs =========
-    function buildTabs(){
-      const root = $("tabs");
-      root.innerHTML = "";
-      for(const k of keys){
-        const b = document.createElement("div");
-        b.className = "tab" + (k===active ? " active" : "");
-        b.textContent = k;
-        b.addEventListener("click", ()=>{
-          active = k;
-          syncUIFromActive();
-          buildTabs();
-          renderPreview();
-        });
-        root.appendChild(b);
-      }
-    }
-
-    // ========= Icon picker =========
-    function buildIconPicker(){
-      const sel = $("iconPick");
-      sel.innerHTML = "";
-      for(const it of ICONS){
-        const o = document.createElement("option");
-        o.value = it.id;
-        o.textContent = it.name;
-        sel.appendChild(o);
-      }
-    }
-
-    // ========= UI sync =========
-    function syncUIFromActive(){
-      const jd = per[active];
-      $("txt").value = jd.text;
-      $("offX").value = jd.offX;
-      $("offY").value = jd.offY;
-      $("alpha").value = jd.alpha;
-
-      $("iconPick").value = jd.iconId || "none";
-      $("iconColor").value = jd.iconColor || "#ffffff";
-      $("iconScale").value = jd.iconScale;
-      $("iconX").value = jd.iconX;
-      $("iconY").value = jd.iconY;
-      $("iconBehind").value = jd.iconBehind ? "yes" : "no";
-    }
-
-    function syncSharedUI(){
-      $("fontName").value = shared.fontName;
-      $("fontSize").value = shared.fontSize;
-      $("tracking").value = shared.tracking;
-      $("skewDeg").value = shared.skewDeg;
-
-      $("fill").value = shared.fill;
-      $("strokeW").value = shared.strokeW;
-      $("stroke").value = shared.stroke;
-
-      $("shadowBlur").value = shared.shadowBlur;
-      $("shadowX").value = shared.shadowX;
-      $("shadowY").value = shared.shadowY;
-      $("shadowColor").value = shared.shadowColor;
-
-      $("glowBlur").value = shared.glowBlur;
-      $("glowColor").value = shared.glowColor;
-
-      $("toggleGuides").textContent = `Guias: ${shared.guides ? "ON" : "OFF"}`;
-    }
-
-    // ========= Bind shared =========
-    const bindShared = (id, key, parser=(v)=>v)=>{
-      const el = $(id);
-      const read = ()=>{
-        shared[key] = parser(el.value);
+      const b=document.createElement("div");
+      b.className="tab"+(k===active?" active":"");
+      b.textContent=k;
+      b.addEventListener("click", ()=>{
+        active=k;
+        syncUIFromActive();
+        buildTabs();
         renderPreview();
-      };
-      el.addEventListener("input", read);
-      el.addEventListener("change", read);
-    };
-
-    bindShared("fontName","fontName",v=>v);
-    bindShared("fontSize","fontSize",v=>Number(v||0));
-    bindShared("tracking","tracking",v=>Number(v||0));
-    bindShared("skewDeg","skewDeg",v=>Number(v||0));
-
-    bindShared("fill","fill",v=>v);
-    bindShared("strokeW","strokeW",v=>Number(v||0));
-    bindShared("stroke","stroke",v=>v);
-
-    bindShared("shadowBlur","shadowBlur",v=>Number(v||0));
-    bindShared("shadowX","shadowX",v=>Number(v||0));
-    bindShared("shadowY","shadowY",v=>Number(v||0));
-    bindShared("shadowColor","shadowColor",v=>v);
-
-    bindShared("glowBlur","glowBlur",v=>Number(v||0));
-    bindShared("glowColor","glowColor",v=>v);
-
-    // ========= Bind per-judgement =========
-    const bindPer = (id, setter)=>{
-      const el = $(id);
-      const read = ()=>{
-        setter(el.value);
-        renderPreview();
-      };
-      el.addEventListener("input", read);
-      el.addEventListener("change", read);
-    };
-
-    bindPer("txt", v=> per[active].text = v);
-    bindPer("offX", v=> per[active].offX = Number(v||0));
-    bindPer("offY", v=> per[active].offY = Number(v||0));
-    bindPer("alpha", v=> per[active].alpha = Number(v||1));
-
-    bindPer("iconScale", v=> per[active].iconScale = Number(v||1));
-    bindPer("iconX", v=> per[active].iconX = Number(v||0));
-    bindPer("iconY", v=> per[active].iconY = Number(v||0));
-    bindPer("iconColor", v=> per[active].iconColor = v);
-
-    $("iconPick").addEventListener("change", (e)=>{
-      per[active].iconId = e.target.value || "none";
-      renderPreview();
-    });
-
-    $("iconBehind").addEventListener("change", (e)=>{
-      per[active].iconBehind = e.target.value === "yes";
-      renderPreview();
-    });
-
-    $("clearIcon").addEventListener("click", ()=>{
-      per[active].iconId = "none";
-      $("iconPick").value = "none";
-      renderPreview();
-      toast(`Ícone limpo (${active})`);
-    });
-
-    // ========= Font upload =========
-    $("fontFile").addEventListener("change", async (e)=>{
-      const file = e.target.files?.[0];
-      if(!file) return;
-      try{
-        const buf = await file.arrayBuffer();
-        const fname = file.name.replace(/\.(ttf|otf)$/i,"");
-        const face = new FontFace(fname, buf);
-        $("statusPill").textContent = "carregando fonte…";
-        await face.load();
-        document.fonts.add(face);
-        shared.fontName = fname;
-        $("fontName").value = fname;
-        $("statusPill").textContent = "fonte ok";
-        toast("Fonte carregada ✅");
-        await document.fonts.ready;
-        renderPreview();
-      }catch(err){
-        console.error(err);
-        $("statusPill").textContent = "erro fonte";
-        toast("Falha ao carregar fonte 😵");
-      }
-    });
-
-    // ========= Export =========
-    async function exportSelected(){
-      // baixa 2 arquivos: normal + @2x
-      const blob1 = await renderKeyToBlob(active, 1);
-      downloadBlob(blob1, `${sanitizeName(active)}.png`);
-      await sleep(140);
-
-      const blob2 = await renderKeyToBlob(active, 2);
-      downloadBlob(blob2, `${sanitizeName(active)}@2x.png`);
-
-      toast(`Baixando ${active} + @2x…`);
-      await renderPreview();
-    }
-
-    async function exportAll(){
-      const old = active;
-      for(const k of keys){
-        // normal
-        const b1 = await renderKeyToBlob(k, 1);
-        downloadBlob(b1, `${sanitizeName(k)}.png`);
-        await sleep(140);
-
-        // @2x
-        const b2 = await renderKeyToBlob(k, 2);
-        downloadBlob(b2, `${sanitizeName(k)}@2x.png`);
-        await sleep(160);
-      }
-      active = old;
-      buildTabs();
-      syncUIFromActive();
-      await renderPreview();
-      toast("Exportou 12 PNGs ✅");
-    }
-
-    $("downloadOne").addEventListener("click", exportSelected);
-    $("exportAll").addEventListener("click", exportAll);
-
-    // ========= Toggles =========
-    $("toggleGuides").addEventListener("click", ()=>{
-      shared.guides = !shared.guides;
-      $("toggleGuides").textContent = `Guias: ${shared.guides ? "ON" : "OFF"}`;
-      renderPreview();
-    });
-
-    $("toggleBG").addEventListener("click", ()=>{
-      shared.previewBG = !shared.previewBG;
-      renderPreview();
-      toast(`Fundo preview: ${shared.previewBG ? "ON" : "OFF"}`);
-    });
-
-    // ========= Dragging offsets =========
-    let dragging = false;
-    let dragMode = "text";
-    let lastX=0, lastY=0;
-
-    $("canvasWrap").addEventListener("mousedown", (e)=>{
-      dragging = true;
-      dragMode = e.shiftKey ? "icon" : "text";
-      lastX = e.clientX;
-      lastY = e.clientY;
-      e.preventDefault();
-    });
-    window.addEventListener("mouseup", ()=>dragging=false);
-    window.addEventListener("mousemove", (e)=>{
-      if(!dragging) return;
-
-      const dx = e.clientX - lastX;
-      const dy = e.clientY - lastY;
-      lastX = e.clientX;
-      lastY = e.clientY;
-
-      const rect = canvas.getBoundingClientRect();
-      const sx = BASE_W / rect.width;
-      const sy = BASE_H / rect.height;
-
-      const jd = per[active];
-      if(dragMode === "icon"){
-        jd.iconX += dx * sx;
-        jd.iconY += dy * sy;
-        $("iconX").value = Math.round(jd.iconX);
-        $("iconY").value = Math.round(jd.iconY);
-      }else{
-        jd.offX += dx * sx;
-        jd.offY += dy * sy;
-        $("offX").value = Math.round(jd.offX);
-        $("offY").value = Math.round(jd.offY);
-      }
-      renderPreview();
-    });
-
-    // ========= Reset =========
-    $("reset").addEventListener("click", async ()=>{
-      Object.assign(shared, {
-        fontName:"Arial Black",
-        fontSize:34,
-        tracking:0,
-        skewDeg:0,
-        fill:"#ffffff",
-        strokeW:4,
-        stroke:"#000000",
-        shadowBlur:0,
-        shadowX:0,
-        shadowY:0,
-        shadowColor:"#000000",
-        glowBlur:10,
-        glowColor:"#7c5cff",
-        guides:true,
-        previewBG:false
       });
+      root.appendChild(b);
+    }
+  }
 
-      for(const k of keys){
-        per[k] = {
-          text:k,
-          alpha:1,
-          offX:0,
-          offY:0,
-          iconId:"none",
-          iconColor:"#ffffff",
-          iconScale:1,
-          iconX:0,
-          iconY:0,
-          iconBehind:true
-        };
-      }
+  // Icon picker
+  function buildIconPicker(){
+    const sel=$("iconPick");
+    sel.innerHTML="";
+    for(const it of ICONS){
+      const o=document.createElement("option");
+      o.value=it.id;
+      o.textContent=it.name;
+      sel.appendChild(o);
+    }
+  }
 
-      active = "300";
-      buildTabs();
-      syncSharedUI();
-      syncUIFromActive();
-      $("statusPill").textContent = "reset";
-      toast("Reset feito");
-      await renderPreview();
-    });
+  // UI sync
+  function syncUIFromActive(){
+    const jd=per[active];
+    $("txt").value=jd.text;
+    $("offX").value=jd.offX;
+    $("offY").value=jd.offY;
+    $("alpha").value=jd.alpha;
 
-    // ========= init =========
-    (async function init(){
-      buildTabs();
-      buildIconPicker();
-      syncSharedUI();
-      syncUIFromActive();
+    $("iconPick").value=jd.iconId||"none";
+    $("iconColor").value=jd.iconColor||"#ffffff";
+    $("iconScale").value=jd.iconScale;
+    $("iconX").value=jd.iconX;
+    $("iconY").value=jd.iconY;
+    $("iconBehind").value=jd.iconBehind ? "yes" : "no";
+  }
+
+  function syncSharedUI(){
+    $("fontName").value=shared.fontName;
+    $("fontSize").value=shared.fontSize;
+    $("tracking").value=shared.tracking;
+    $("skewDeg").value=shared.skewDeg;
+
+    $("fill").value=shared.fill;
+    $("strokeW").value=shared.strokeW;
+    $("stroke").value=shared.stroke;
+
+    $("shadowBlur").value=shared.shadowBlur;
+    $("shadowX").value=shared.shadowX;
+    $("shadowY").value=shared.shadowY;
+    $("shadowColor").value=shared.shadowColor;
+
+    $("glowBlur").value=shared.glowBlur;
+    $("glowColor").value=shared.glowColor;
+
+    $("toggleGuides").textContent=`Guias: ${shared.guides ? "ON":"OFF"}`;
+  }
+
+  // Bind shared
+  const bindShared=(id,key,parser=(v)=>v)=>{
+    const el=$(id);
+    const read=()=>{ shared[key]=parser(el.value); renderPreview(); };
+    el.addEventListener("input",read);
+    el.addEventListener("change",read);
+  };
+  bindShared("fontName","fontName",v=>v);
+  bindShared("fontSize","fontSize",v=>Number(v||0));
+  bindShared("tracking","tracking",v=>Number(v||0));
+  bindShared("skewDeg","skewDeg",v=>Number(v||0));
+  bindShared("fill","fill",v=>v);
+  bindShared("strokeW","strokeW",v=>Number(v||0));
+  bindShared("stroke","stroke",v=>v);
+  bindShared("shadowBlur","shadowBlur",v=>Number(v||0));
+  bindShared("shadowX","shadowX",v=>Number(v||0));
+  bindShared("shadowY","shadowY",v=>Number(v||0));
+  bindShared("shadowColor","shadowColor",v=>v);
+  bindShared("glowBlur","glowBlur",v=>Number(v||0));
+  bindShared("glowColor","glowColor",v=>v);
+
+  // Bind per
+  const bindPer=(id,setter)=>{
+    const el=$(id);
+    const read=()=>{ setter(el.value); renderPreview(); };
+    el.addEventListener("input",read);
+    el.addEventListener("change",read);
+  };
+  bindPer("txt", v=>per[active].text=v);
+  bindPer("offX", v=>per[active].offX=Number(v||0));
+  bindPer("offY", v=>per[active].offY=Number(v||0));
+  bindPer("alpha", v=>per[active].alpha=Number(v||1));
+  bindPer("iconScale", v=>per[active].iconScale=Number(v||1));
+  bindPer("iconX", v=>per[active].iconX=Number(v||0));
+  bindPer("iconY", v=>per[active].iconY=Number(v||0));
+  bindPer("iconColor", v=>per[active].iconColor=v);
+
+  $("iconPick").addEventListener("change",(e)=>{
+    per[active].iconId=e.target.value||"none";
+    renderPreview();
+  });
+  $("iconBehind").addEventListener("change",(e)=>{
+    per[active].iconBehind=(e.target.value==="yes");
+    renderPreview();
+  });
+  $("clearIcon").addEventListener("click", ()=>{
+    per[active].iconId="none";
+    $("iconPick").value="none";
+    renderPreview();
+    toast(`Ícone limpo (${active})`);
+  });
+
+  // Font upload
+  $("fontFile").addEventListener("change", async (e)=>{
+    const file=e.target.files?.[0];
+    if(!file) return;
+    try{
+      const buf=await file.arrayBuffer();
+      const fname=file.name.replace(/\.(ttf|otf)$/i,"");
+      const face=new FontFace(fname, buf);
+      $("statusPill").textContent="carregando fonte…";
+      await face.load();
+      document.fonts.add(face);
+      shared.fontName=fname;
+      $("fontName").value=fname;
+      $("statusPill").textContent="fonte ok";
+      toast("Fonte carregada ✅");
       await document.fonts.ready;
-      await renderPreview();
-      toast("Pronto ✅");
-    })();
-  </script>
+      renderPreview();
+    }catch(err){
+      console.error(err);
+      $("statusPill").textContent="erro fonte";
+      toast("Falha ao carregar fonte 😵");
+    }
+  });
+
+  // Export (master -> normal)
+  async function exportOne(key){
+    const master=await renderMasterToCanvas(key);
+    const normal=await renderNormalFromMaster(master);
+
+    const bNormal=await canvasToBlob(normal);
+    downloadBlob(bNormal, `${sanitizeName(key)}.png`);
+    await sleep(140);
+
+    const b2x=await canvasToBlob(master);
+    downloadBlob(b2x, `${sanitizeName(key)}@2x.png`);
+  }
+
+  async function exportSelected(){
+    await exportOne(active);
+    toast(`Baixando ${active} + @2x…`);
+    await renderPreview();
+  }
+
+  async function exportAll(){
+    for(const k of keys){
+      await exportOne(k);
+      await sleep(180);
+    }
+    toast("Exportou 12 PNGs ✅");
+    await renderPreview();
+  }
+
+  $("downloadOne").addEventListener("click", exportSelected);
+  $("exportAll").addEventListener("click", exportAll);
+
+  // Toggles
+  $("toggleGuides").addEventListener("click", ()=>{
+    shared.guides=!shared.guides;
+    $("toggleGuides").textContent=`Guias: ${shared.guides ? "ON":"OFF"}`;
+    renderPreview();
+  });
+  $("toggleBG").addEventListener("click", ()=>{
+    shared.previewBG=!shared.previewBG;
+    renderPreview();
+    toast(`Fundo preview: ${shared.previewBG ? "ON":"OFF"}`);
+  });
+
+  // Drag offsets (em unidades base; preview é @2x, então converte)
+  let dragging=false;
+  let dragMode="text";
+  let lastX=0,lastY=0;
+
+  $("canvasWrap").addEventListener("mousedown",(e)=>{
+    dragging=true;
+    dragMode=e.shiftKey ? "icon":"text";
+    lastX=e.clientX; lastY=e.clientY;
+    e.preventDefault();
+  });
+  window.addEventListener("mouseup",()=>dragging=false);
+  window.addEventListener("mousemove",(e)=>{
+    if(!dragging) return;
+    const dx=e.clientX-lastX, dy=e.clientY-lastY;
+    lastX=e.clientX; lastY=e.clientY;
+
+    const rect=canvas.getBoundingClientRect();
+    const sx=BASE_W / rect.width;
+    const sy=BASE_H / rect.height;
+
+    const jd=per[active];
+    if(dragMode==="icon"){
+      jd.iconX += dx*sx;
+      jd.iconY += dy*sy;
+      $("iconX").value=Math.round(jd.iconX);
+      $("iconY").value=Math.round(jd.iconY);
+    }else{
+      jd.offX += dx*sx;
+      jd.offY += dy*sy;
+      $("offX").value=Math.round(jd.offX);
+      $("offY").value=Math.round(jd.offY);
+    }
+    renderPreview();
+  });
+
+  // Reset
+  $("reset").addEventListener("click", async ()=>{
+    Object.assign(shared,{
+      fontName:"Arial Black", fontSize:34, tracking:0, skewDeg:0,
+      fill:"#ffffff", strokeW:4, stroke:"#000000",
+      shadowBlur:0, shadowX:0, shadowY:0, shadowColor:"#000000",
+      glowBlur:10, glowColor:"#7c5cff",
+      guides:true, previewBG:false
+    });
+    for(const k of keys){
+      per[k]={ text:k, alpha:1, offX:0, offY:0,
+        iconId:"none", iconColor:"#ffffff", iconScale:1, iconX:0, iconY:0,
+        iconBehind:true
+      };
+    }
+    active="300";
+    buildTabs(); syncSharedUI(); syncUIFromActive();
+    $("statusPill").textContent="reset";
+    toast("Reset feito");
+    await renderPreview();
+  });
+
+  // init
+  (async function init(){
+    buildTabs();
+    buildIconPicker();
+    syncSharedUI();
+    syncUIFromActive();
+    await document.fonts.ready;
+    await renderPreview();
+    toast("Pronto ✅");
+  })();
+</script>
 </body>
 </html>
