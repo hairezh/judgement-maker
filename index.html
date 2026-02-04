@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>osu!mania Judgement PNG Maker (0/50/100/200/300/300g)</title>
+  <title>osu!mania judgement-maker (288x56 + @2x)</title>
   <style>
     :root{
       --bg:#0b0c0f; --fg:#e8e8e8; --muted:#9aa0a6;
@@ -31,10 +31,11 @@
     }
     header h1{margin:0; font-size:16px; letter-spacing:.2px}
     header .hint{color:var(--muted); font-size:12px}
+
     .wrap{
       padding:18px;
       display:grid;
-      grid-template-columns: 410px 1fr;
+      grid-template-columns: 430px 1fr;
       gap:14px;
       align-items:start;
     }
@@ -62,7 +63,7 @@
 
     .field{display:flex; flex-direction:column; gap:6px; margin-bottom:10px}
     label{font-size:12px; color:var(--muted)}
-    input[type="text"], input[type="number"], select, textarea{
+    input[type="text"], input[type="number"], select{
       width:100%;
       padding:10px 10px;
       border-radius:12px;
@@ -71,7 +72,6 @@
       color:var(--fg);
       outline:none;
     }
-    textarea{min-height:84px; resize:vertical; font-family:var(--mono); font-size:12px}
     input[type="color"]{
       width:100%;
       height:40px;
@@ -142,6 +142,22 @@
       display:flex; flex-direction:column; gap:12px;
       padding:12px;
     }
+    .stageTop{
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .stageTop .left{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    .stageTop .right{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+
+    .kbd{
+      font-family:var(--mono);
+      font-size:11px;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:6px 8px;
+      border-radius:10px;
+      background:rgba(0,0,0,.20);
+    }
+
     .canvasWrap{
       border-radius:18px;
       border:1px solid var(--border);
@@ -152,24 +168,23 @@
       background-size: 28px 28px;
       overflow:hidden;
       position:relative;
+      padding:18px;
     }
-    canvas{display:block; width:100%; height:auto; image-rendering:auto;}
 
-    .stageTop{
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    /* preview: mostra o canvas em tamanho confortável */
+    canvas{
+      display:block;
+      width:100%;
+      max-width: 720px;
+      height:auto;
+      margin: 0 auto;
+      image-rendering:auto;
+      border-radius:14px;
+      background: transparent;
     }
-    .stageTop .left{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
-    .stageTop .right{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
-    .kbd{
-      font-family:var(--mono);
-      font-size:11px;
-      color:var(--muted);
-      border:1px solid var(--border);
-      padding:6px 8px;
-      border-radius:10px;
-      background:rgba(0,0,0,.20);
-    }
+
     .divider{height:1px; background:var(--border); margin:10px 0}
+
     .toast{
       position:fixed;
       right:14px;
@@ -190,8 +205,8 @@
 </head>
 <body>
   <header>
-    <h1>osu!mania Judgement PNG Maker</h1>
-    <span class="hint">Edite cada judgement (0/50/100/200/300/300g) e exporte 6 PNGs nomeados.</span>
+    <h1>judgement-maker</h1>
+    <span class="hint">Export fixo: 288×56 + 576×112 (@2x). Ícones simples embutidos.</span>
   </header>
 
   <div class="wrap">
@@ -223,8 +238,8 @@
 
         <div class="row3">
           <div class="field">
-            <label>Tamanho (px)</label>
-            <input id="fontSize" type="number" value="92" min="1" step="1" />
+            <label>Tamanho (px) — base 288×56</label>
+            <input id="fontSize" type="number" value="34" min="1" step="1" />
           </div>
           <div class="field">
             <label>Tracking</label>
@@ -243,7 +258,7 @@
           </div>
           <div class="field">
             <label>Outline (px)</label>
-            <input id="strokeW" type="number" value="10" min="0" step="1" />
+            <input id="strokeW" type="number" value="4" min="0" step="1" />
           </div>
           <div class="field">
             <label>Cor do outline</label>
@@ -273,7 +288,7 @@
           </div>
           <div class="field">
             <label>Glow (blur)</label>
-            <input id="glowBlur" type="number" value="18" min="0" step="1" />
+            <input id="glowBlur" type="number" value="10" min="0" step="1" />
           </div>
           <div class="field">
             <label>Cor do glow</label>
@@ -282,39 +297,6 @@
         </div>
 
         <div class="divider"></div>
-
-        <div class="row">
-          <div class="field">
-            <label>Tamanho do PNG</label>
-            <select id="sizePreset">
-              <option value="512x256" selected>512 × 256 (comum)</option>
-              <option value="256x256">256 × 256</option>
-              <option value="512x512">512 × 512</option>
-              <option value="1024x512">1024 × 512</option>
-              <option value="1024x1024">1024 × 1024</option>
-              <option value="custom">Custom…</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Resolução interna (scale)</label>
-            <select id="scale">
-              <option value="1">1x</option>
-              <option value="2" selected>2x (nítido)</option>
-              <option value="3">3x</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label>Largura custom</label>
-            <input id="cw" type="number" value="512" min="1" step="1" />
-          </div>
-          <div class="field">
-            <label>Altura custom</label>
-            <input id="ch" type="number" value="256" min="1" step="1" />
-          </div>
-        </div>
 
         <div class="row3">
           <div class="field">
@@ -334,8 +316,8 @@
         <div class="divider"></div>
 
         <div class="field">
-          <label>Ícone / símbolo (PNG opcional — só deste judgement)</label>
-          <input id="iconFile" type="file" accept="image/png,image/webp,image/jpeg" />
+          <label>Ícone (embutido) — só deste judgement</label>
+          <select id="iconPick"></select>
         </div>
 
         <div class="row3">
@@ -362,14 +344,11 @@
             </select>
           </div>
           <div class="field">
-            <label>Suavizar ícone</label>
-            <select id="iconSmooth">
-              <option value="yes" selected>Sim</option>
-              <option value="no">Não (pixelado)</option>
-            </select>
+            <label>Cor do ícone</label>
+            <input id="iconColor" type="color" value="#ffffff" />
           </div>
           <div class="field">
-            <label>Remover ícone</label>
+            <label>Limpar ícone</label>
             <button class="danger" id="clearIcon" type="button">Limpar</button>
           </div>
         </div>
@@ -377,13 +356,14 @@
         <div class="divider"></div>
 
         <div class="btns">
-          <button id="downloadOne" type="button">Baixar PNG (selecionado)</button>
-          <button id="exportAll" type="button">Exportar 6 PNGs</button>
+          <button id="downloadOne" type="button">Baixar (selecionado + @2x)</button>
+          <button id="exportAll" type="button">Exportar 12 PNGs</button>
           <button id="reset" class="secondary" type="button">Reset</button>
         </div>
 
         <p class="small">
-          Dica: selecione o judgement no topo, ajuste texto/offset/ícone dele, e no fim clique <b>Exportar 6 PNGs</b>.
+          Export fixo: <b>288×56</b> e <b>576×112</b> (@2x).<br/>
+          Arraste no preview = move offset do texto. Shift+arraste = move ícone.
         </p>
       </div>
     </section>
@@ -393,15 +373,15 @@
       <div class="title">
         <strong>Preview</strong>
         <div class="right">
-          <span class="kbd">Arraste = move offset</span>
-          <span class="kbd">Shift+arraste = move ícone</span>
+          <span class="kbd">Arraste = texto</span>
+          <span class="kbd">Shift+arraste = ícone</span>
         </div>
       </div>
 
       <div class="stage">
         <div class="stageTop">
           <div class="left">
-            <span class="pill" id="dimPill">512×256</span>
+            <span class="pill" id="dimPill">288×56 + @2x</span>
             <span class="pill" id="fontPill">fonte: Arial Black</span>
             <span class="pill" id="whichPill">editando: 300</span>
           </div>
@@ -416,7 +396,7 @@
         </div>
 
         <p class="small">
-          Export sai com <b>fundo transparente</b>. Xadrez é só preview.
+          O PNG exportado sai com <b>fundo transparente</b>. O xadrez é só preview.
         </p>
       </div>
     </section>
@@ -439,15 +419,100 @@
     const sanitizeName = (s)=> (s||"judgement").toString().trim()
       .replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g,"_").slice(0,80) || "judgement";
 
-    // ========= Global style (shared) =========
+    // ========= Fixed export sizes =========
+    const BASE_W = 288, BASE_H = 56;
+
+    // ========= Simple built-in icons (SVG paths) =========
+    // viewBox 0 0 100 100, fill = currentColor
+    const ICONS = [
+      { id: "none",  name: "Nenhum", svg: "" },
+
+      { id: "star",  name: "⭐ Star", svg:
+        `<path d="M50 6 L62 36 L94 38 L69 58 L77 90 L50 73 L23 90 L31 58 L6 38 L38 36 Z"/>`
+      },
+
+      { id: "diamond", name: "◆ Diamond", svg:
+        `<path d="M50 6 L92 50 L50 94 L8 50 Z"/>`
+      },
+
+      { id: "circle", name: "● Circle", svg:
+        `<circle cx="50" cy="50" r="38"/>`
+      },
+
+      { id: "triangle", name: "▲ Triangle", svg:
+        `<path d="M50 10 L92 86 L8 86 Z"/>`
+      },
+
+      { id: "crown", name: "👑 Crown", svg:
+        `<path d="M12 72 L18 28 L36 48 L50 22 L64 48 L82 28 L88 72 Z"/><rect x="16" y="72" width="68" height="16" rx="4"/>`
+      },
+
+      { id: "bolt", name: "⚡ Bolt", svg:
+        `<path d="M58 6 L18 58 L46 58 L40 94 L82 40 L54 40 Z"/>`
+      },
+
+      { id: "heart", name: "♥ Heart", svg:
+        `<path d="M50 88 C20 66 12 52 12 38 C12 25 21 16 34 16 C42 16 48 20 50 24 C52 20 58 16 66 16 C79 16 88 25 88 38 C88 52 80 66 50 88 Z"/>`
+      },
+
+      { id: "x", name: "✖ X", svg:
+        `<path d="M22 18 L50 46 L78 18 L90 30 L62 58 L90 86 L78 98 L50 70 L22 98 L10 86 L38 58 L10 30 Z"/>`
+      },
+
+      { id: "plus", name: "＋ Plus", svg:
+        `<path d="M44 12 H56 V44 H88 V56 H56 V88 H44 V56 H12 V44 H44 Z"/>`
+      },
+
+      { id: "bang", name: "❗ Exclam", svg:
+        `<rect x="44" y="10" width="12" height="58" rx="6"/><circle cx="50" cy="80" r="8"/>`
+      }
+    ];
+
+    function makeSvgDataUrl(iconId, color){
+      const icon = ICONS.find(x=>x.id===iconId);
+      if(!icon || !icon.svg) return null;
+
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+          <g fill="${color}">${icon.svg}</g>
+        </svg>
+      `.trim();
+
+      const encoded = encodeURIComponent(svg)
+        .replace(/'/g,"%27").replace(/"/g,"%22");
+      return `data:image/svg+xml;charset=utf-8,${encoded}`;
+    }
+
+    const iconImgCache = new Map(); // key = `${id}|${color}`
+    async function getIconImage(iconId, color){
+      if(iconId === "none") return null;
+      const key = `${iconId}|${color}`;
+      if(iconImgCache.has(key)) return iconImgCache.get(key);
+
+      const url = makeSvgDataUrl(iconId, color);
+      if(!url) return null;
+
+      const img = new Image();
+      img.decoding = "async";
+      const p = new Promise((resolve, reject)=>{
+        img.onload = ()=>resolve(img);
+        img.onerror = reject;
+      });
+      img.src = url;
+      const loaded = await p;
+      iconImgCache.set(key, loaded);
+      return loaded;
+    }
+
+    // ========= Shared style (base units for 288x56) =========
     const shared = {
       fontName: "Arial Black",
-      fontSize: 92,
+      fontSize: 34,
       tracking: 0,
       skewDeg: 0,
 
       fill: "#ffffff",
-      strokeW: 10,
+      strokeW: 4,
       stroke: "#000000",
 
       shadowBlur: 0,
@@ -455,18 +520,14 @@
       shadowY: 0,
       shadowColor: "#000000",
 
-      glowBlur: 18,
+      glowBlur: 10,
       glowColor: "#7c5cff",
-
-      w: 512,
-      h: 256,
-      scale: 2,
 
       guides: true,
       previewBG: false
     };
 
-    // ========= Per-judgement data =========
+    // ========= Per-judgement =========
     const keys = ["0","50","100","200","300","300g"];
     const per = {};
     for(const k of keys){
@@ -475,12 +536,13 @@
         alpha: 1,
         offX: 0,
         offY: 0,
-        iconImg: null,
+
+        iconId: "none",
+        iconColor: "#ffffff",
         iconScale: 1,
         iconX: 0,
         iconY: 0,
-        iconBehind: true,
-        iconSmooth: true
+        iconBehind: true
       };
     }
     let active = "300";
@@ -489,25 +551,7 @@
     const canvas = $("c");
     const ctx = canvas.getContext("2d");
 
-    function setCanvasSize(){
-      canvas.width  = Math.max(1, Math.floor(shared.w * shared.scale));
-      canvas.height = Math.max(1, Math.floor(shared.h * shared.scale));
-      $("dimPill").textContent = `${shared.w}×${shared.h}`;
-    }
-
-    function measureTextBox(text, font){
-      ctx.save();
-      ctx.font = font;
-      const m = ctx.measureText(text);
-      const ascent  = (m.actualBoundingBoxAscent ?? m.fontBoundingBoxAscent ?? (shared.fontSize * 0.8));
-      const descent = (m.actualBoundingBoxDescent ?? m.fontBoundingBoxDescent ?? (shared.fontSize * 0.2));
-      const left  = (m.actualBoundingBoxLeft ?? 0);
-      const right = (m.actualBoundingBoxRight ?? m.width);
-      ctx.restore();
-      return { ascent, descent, left, right, width: right+left, height: ascent+descent };
-    }
-
-    function clear(){
+    function clear(scale){
       ctx.clearRect(0,0,canvas.width,canvas.height);
       if(shared.previewBG){
         ctx.save();
@@ -517,21 +561,32 @@
       }
     }
 
-    function drawGuides(){
+    function drawGuides(scale){
       if(!shared.guides) return;
       const W = canvas.width, H = canvas.height;
       ctx.save();
       ctx.globalAlpha = 0.55;
-      ctx.lineWidth = Math.max(1, shared.scale);
+      ctx.lineWidth = Math.max(1, scale);
       ctx.beginPath();
       ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H);
       ctx.moveTo(0, H/2); ctx.lineTo(W, H/2);
       ctx.strokeStyle = "rgba(255,255,255,.25)";
       ctx.stroke();
-      const pad = 14 * shared.scale;
+
+      const pad = 6 * scale;
       ctx.strokeStyle = "rgba(124,92,255,.35)";
       ctx.strokeRect(pad, pad, W - pad*2, H - pad*2);
       ctx.restore();
+    }
+
+    function measureTextBox(text, font){
+      ctx.save();
+      ctx.font = font;
+      const m = ctx.measureText(text);
+      const ascent  = (m.actualBoundingBoxAscent ?? m.fontBoundingBoxAscent ?? (shared.fontSize * 0.8));
+      const descent = (m.actualBoundingBoxDescent ?? m.fontBoundingBoxDescent ?? (shared.fontSize * 0.2));
+      ctx.restore();
+      return { ascent, descent };
     }
 
     function drawTextWithTracking(text, x, y, tracking, strokeOnly, fillOnly){
@@ -553,41 +608,47 @@
       }
     }
 
-    function drawIcon(centerX, centerY, jd){
-      if(!jd.iconImg) return;
-      const img = jd.iconImg;
-      const scale = jd.iconScale * shared.scale;
-      const iw = img.naturalWidth * scale;
-      const ih = img.naturalHeight * scale;
-      const x = centerX - iw/2 + (jd.iconX * shared.scale);
-      const y = centerY - ih/2 + (jd.iconY * shared.scale);
+    async function drawIcon(centerX, centerY, scale, jd){
+      if(!jd.iconId || jd.iconId==="none") return;
+
+      const img = await getIconImage(jd.iconId, jd.iconColor);
+      if(!img) return;
+
+      // tamanho base do ícone (em px no 288x56), você pode mudar se quiser
+      const ICON_BASE_PX = 36;
+
+      const px = ICON_BASE_PX * jd.iconScale * scale;
+      const x = centerX - px/2 + (jd.iconX * scale);
+      const y = centerY - px/2 + (jd.iconY * scale);
 
       ctx.save();
-      ctx.imageSmoothingEnabled = !!jd.iconSmooth;
       ctx.globalAlpha = clamp(jd.alpha,0,1);
-      ctx.drawImage(img, x, y, iw, ih);
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(img, x, y, px, px);
       ctx.restore();
     }
 
-    function drawJudgement(jKey){
+    async function drawJudgement(scale, jKey){
       const jd = per[jKey];
-      const size = shared.fontSize * shared.scale;
+      const W = canvas.width, H = canvas.height;
+
+      // pivot (centro) + offsets por judgement
+      const centerX = W/2 + (jd.offX * scale);
+      const centerY = H/2 + (jd.offY * scale);
+
+      const size = shared.fontSize * scale;
       const font = `${size}px "${shared.fontName}"`;
+      const tracking = Number(shared.tracking || 0) * scale;
       const text = jd.text ?? "";
-      const tracking = Number(shared.tracking || 0) * shared.scale;
 
-      // Center pivot + per-judgement offsets
-      const centerX = canvas.width/2  + (jd.offX * shared.scale);
-      const centerY = canvas.height/2 + (jd.offY * shared.scale);
-
-      // Real centering
+      // centralização real
       const box = measureTextBox(text, font);
       const baselineToMiddle = (box.ascent - box.descent) / 2;
       const x0 = centerX;
       const y0 = centerY + baselineToMiddle;
 
-      // Icon behind?
-      if(jd.iconBehind) drawIcon(centerX, centerY, jd);
+      // ícone atrás?
+      if(jd.iconBehind) await drawIcon(centerX, centerY, scale, jd);
 
       ctx.save();
       ctx.globalAlpha = clamp(jd.alpha,0,1);
@@ -602,7 +663,7 @@
       // glow
       if(Number(shared.glowBlur) > 0){
         ctx.save();
-        ctx.shadowBlur = Number(shared.glowBlur) * shared.scale;
+        ctx.shadowBlur = Number(shared.glowBlur) * scale;
         ctx.shadowColor = shared.glowColor;
         ctx.fillStyle = shared.fill;
         drawTextWithTracking(text, x0, y0, tracking, false, true);
@@ -612,10 +673,10 @@
       // shadow
       if(Number(shared.shadowBlur) > 0 || Number(shared.shadowX) !== 0 || Number(shared.shadowY) !== 0){
         ctx.save();
-        ctx.shadowBlur = Number(shared.shadowBlur) * shared.scale;
+        ctx.shadowBlur = Number(shared.shadowBlur) * scale;
         ctx.shadowColor = shared.shadowColor;
-        ctx.shadowOffsetX = Number(shared.shadowX) * shared.scale;
-        ctx.shadowOffsetY = Number(shared.shadowY) * shared.scale;
+        ctx.shadowOffsetX = Number(shared.shadowX) * scale;
+        ctx.shadowOffsetY = Number(shared.shadowY) * scale;
         ctx.fillStyle = shared.fill;
         drawTextWithTracking(text, x0, y0, tracking, false, true);
         ctx.restore();
@@ -625,7 +686,7 @@
       if(Number(shared.strokeW) > 0){
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
-        ctx.lineWidth = Number(shared.strokeW) * shared.scale;
+        ctx.lineWidth = Number(shared.strokeW) * scale;
         ctx.strokeStyle = shared.stroke;
         drawTextWithTracking(text, x0, y0, tracking, true, false);
       }
@@ -636,22 +697,49 @@
 
       ctx.restore();
 
-      // Icon front?
-      if(!jd.iconBehind) drawIcon(centerX, centerY, jd);
+      // ícone na frente?
+      if(!jd.iconBehind) await drawIcon(centerX, centerY, scale, jd);
     }
 
-    function render(){
-      setCanvasSize();
-      clear();
-      drawJudgement(active);
-      drawGuides();
+    async function renderPreview(){
+      // preview sempre em tamanho base (288x56), mas a caixa da UI amplia o canvas via CSS
+      canvas.width = BASE_W;
+      canvas.height = BASE_H;
+
+      clear(1);
+      await drawJudgement(1, active);
+      drawGuides(1);
+
       $("fontPill").textContent = `fonte: ${shared.fontName}`;
       $("whichPill").textContent = `editando: ${active}`;
     }
 
-    function getPNGBlob(){
-      return new Promise((resolve) => canvas.toBlob(b=>resolve(b), "image/png"));
+    async function renderToSizeAndGetBlob(targetScale){
+      const w = BASE_W * targetScale;
+      const h = BASE_H * targetScale;
+
+      canvas.width = w;
+      canvas.height = h;
+
+      clear(targetScale);
+      await drawJudgement(targetScale, active);
+
+      return new Promise((resolve)=> canvas.toBlob(b=>resolve(b), "image/png"));
     }
+
+    async function renderKeyToBlob(key, targetScale){
+      const w = BASE_W * targetScale;
+      const h = BASE_H * targetScale;
+
+      canvas.width = w;
+      canvas.height = h;
+
+      clear(targetScale);
+      await drawJudgement(targetScale, key);
+
+      return new Promise((resolve)=> canvas.toBlob(b=>resolve(b), "image/png"));
+    }
+
     function downloadBlob(blob, filename){
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
@@ -676,9 +764,21 @@
           active = k;
           syncUIFromActive();
           buildTabs();
-          render();
+          renderPreview();
         });
         root.appendChild(b);
+      }
+    }
+
+    // ========= Icon picker =========
+    function buildIconPicker(){
+      const sel = $("iconPick");
+      sel.innerHTML = "";
+      for(const it of ICONS){
+        const o = document.createElement("option");
+        o.value = it.id;
+        o.textContent = it.name;
+        sel.appendChild(o);
       }
     }
 
@@ -689,12 +789,13 @@
       $("offX").value = jd.offX;
       $("offY").value = jd.offY;
       $("alpha").value = jd.alpha;
+
+      $("iconPick").value = jd.iconId || "none";
+      $("iconColor").value = jd.iconColor || "#ffffff";
       $("iconScale").value = jd.iconScale;
       $("iconX").value = jd.iconX;
       $("iconY").value = jd.iconY;
       $("iconBehind").value = jd.iconBehind ? "yes" : "no";
-      $("iconSmooth").value = jd.iconSmooth ? "yes" : "no";
-      $("iconFile").value = "";
     }
 
     function syncSharedUI(){
@@ -702,28 +803,28 @@
       $("fontSize").value = shared.fontSize;
       $("tracking").value = shared.tracking;
       $("skewDeg").value = shared.skewDeg;
+
       $("fill").value = shared.fill;
       $("strokeW").value = shared.strokeW;
       $("stroke").value = shared.stroke;
+
       $("shadowBlur").value = shared.shadowBlur;
       $("shadowX").value = shared.shadowX;
       $("shadowY").value = shared.shadowY;
       $("shadowColor").value = shared.shadowColor;
+
       $("glowBlur").value = shared.glowBlur;
       $("glowColor").value = shared.glowColor;
-      $("cw").value = shared.w;
-      $("ch").value = shared.h;
-      $("scale").value = String(shared.scale);
-      $("sizePreset").value = "512x256";
+
       $("toggleGuides").textContent = `Guias: ${shared.guides ? "ON" : "OFF"}`;
     }
 
-    // ========= Bind shared inputs =========
+    // ========= Bind shared =========
     const bindShared = (id, key, parser=(v)=>v)=>{
       const el = $(id);
       const read = ()=>{
         shared[key] = parser(el.value);
-        render();
+        renderPreview();
       };
       el.addEventListener("input", read);
       el.addEventListener("change", read);
@@ -733,22 +834,25 @@
     bindShared("fontSize","fontSize",v=>Number(v||0));
     bindShared("tracking","tracking",v=>Number(v||0));
     bindShared("skewDeg","skewDeg",v=>Number(v||0));
+
     bindShared("fill","fill",v=>v);
     bindShared("strokeW","strokeW",v=>Number(v||0));
     bindShared("stroke","stroke",v=>v);
+
     bindShared("shadowBlur","shadowBlur",v=>Number(v||0));
     bindShared("shadowX","shadowX",v=>Number(v||0));
     bindShared("shadowY","shadowY",v=>Number(v||0));
     bindShared("shadowColor","shadowColor",v=>v);
+
     bindShared("glowBlur","glowBlur",v=>Number(v||0));
     bindShared("glowColor","glowColor",v=>v);
 
-    // ========= Bind per-judgement inputs =========
+    // ========= Bind per-judgement =========
     const bindPer = (id, setter)=>{
       const el = $(id);
       const read = ()=>{
         setter(el.value);
-        render();
+        renderPreview();
       };
       el.addEventListener("input", read);
       el.addEventListener("change", read);
@@ -762,44 +866,23 @@
     bindPer("iconScale", v=> per[active].iconScale = Number(v||1));
     bindPer("iconX", v=> per[active].iconX = Number(v||0));
     bindPer("iconY", v=> per[active].iconY = Number(v||0));
+    bindPer("iconColor", v=> per[active].iconColor = v);
+
+    $("iconPick").addEventListener("change", (e)=>{
+      per[active].iconId = e.target.value || "none";
+      renderPreview();
+    });
 
     $("iconBehind").addEventListener("change", (e)=>{
       per[active].iconBehind = e.target.value === "yes";
-      render();
-    });
-    $("iconSmooth").addEventListener("change", (e)=>{
-      per[active].iconSmooth = e.target.value === "yes";
-      render();
+      renderPreview();
     });
 
-    // ========= size preset =========
-    function applySizePreset(){
-      const v = $("sizePreset").value;
-      if(v !== "custom"){
-        const [w,h] = v.split("x").map(Number);
-        shared.w = w; shared.h = h;
-        $("cw").value = w;
-        $("ch").value = h;
-      }else{
-        shared.w = Number($("cw").value||512);
-        shared.h = Number($("ch").value||256);
-      }
-      render();
-    }
-    $("sizePreset").addEventListener("change", applySizePreset);
-    $("cw").addEventListener("change", ()=>{
-      $("sizePreset").value = "custom";
-      shared.w = Number($("cw").value||512);
-      render();
-    });
-    $("ch").addEventListener("change", ()=>{
-      $("sizePreset").value = "custom";
-      shared.h = Number($("ch").value||256);
-      render();
-    });
-    $("scale").addEventListener("change", (e)=>{
-      shared.scale = Number(e.target.value||1);
-      render();
+    $("clearIcon").addEventListener("click", ()=>{
+      per[active].iconId = "none";
+      $("iconPick").value = "none";
+      renderPreview();
+      toast(`Ícone limpo (${active})`);
     });
 
     // ========= Font upload =========
@@ -818,7 +901,7 @@
         $("statusPill").textContent = "fonte ok";
         toast("Fonte carregada ✅");
         await document.fonts.ready;
-        render();
+        renderPreview();
       }catch(err){
         console.error(err);
         $("statusPill").textContent = "erro fonte";
@@ -826,92 +909,53 @@
       }
     });
 
-    // ========= Icon upload (per active) =========
-    $("iconFile").addEventListener("change", async (e)=>{
-      const file = e.target.files?.[0];
-      if(!file) return;
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = ()=>{
-        per[active].iconImg = img;
-        URL.revokeObjectURL(url);
-        toast(`Ícone carregado (${active}) ✅`);
-        render();
-      };
-      img.onerror = ()=>{
-        URL.revokeObjectURL(url);
-        toast("Falha ao carregar ícone 😵");
-      };
-      img.src = url;
-    });
+    // ========= Export =========
+    async function exportSelected(){
+      // baixa 2 arquivos: normal + @2x
+      const blob1 = await renderKeyToBlob(active, 1);
+      downloadBlob(blob1, `${sanitizeName(active)}.png`);
+      await sleep(140);
 
-    $("clearIcon").addEventListener("click", ()=>{
-      per[active].iconImg = null;
-      $("iconFile").value = "";
-      toast(`Ícone removido (${active})`);
-      render();
-    });
+      const blob2 = await renderKeyToBlob(active, 2);
+      downloadBlob(blob2, `${sanitizeName(active)}@2x.png`);
 
-    // ========= Buttons =========
-    $("downloadOne").addEventListener("click", async ()=>{
-      render();
-      const blob = await getPNGBlob();
-      downloadBlob(blob, `${sanitizeName(active)}.png`);
-      toast(`Baixando ${active}.png…`);
-    });
+      toast(`Baixando ${active} + @2x…`);
+      await renderPreview();
+    }
 
-    $("exportAll").addEventListener("click", async ()=>{
+    async function exportAll(){
       const old = active;
       for(const k of keys){
-        active = k;
-        buildTabs();
-        syncUIFromActive();
-        render();
-        const blob = await getPNGBlob();
-        downloadBlob(blob, `${sanitizeName(k)}.png`);
+        // normal
+        const b1 = await renderKeyToBlob(k, 1);
+        downloadBlob(b1, `${sanitizeName(k)}.png`);
         await sleep(140);
+
+        // @2x
+        const b2 = await renderKeyToBlob(k, 2);
+        downloadBlob(b2, `${sanitizeName(k)}@2x.png`);
+        await sleep(160);
       }
       active = old;
       buildTabs();
       syncUIFromActive();
-      render();
-      toast("Exportou 6 PNGs ✅");
-    });
+      await renderPreview();
+      toast("Exportou 12 PNGs ✅");
+    }
 
-    $("reset").addEventListener("click", ()=>{
-      Object.assign(shared, {
-        fontName:"Arial Black", fontSize:92, tracking:0, skewDeg:0,
-        fill:"#ffffff", strokeW:10, stroke:"#000000",
-        shadowBlur:0, shadowX:0, shadowY:0, shadowColor:"#000000",
-        glowBlur:18, glowColor:"#7c5cff",
-        w:512, h:256, scale:2,
-        guides:true, previewBG:false
-      });
-      for(const k of keys){
-        per[k] = {
-          text: k, alpha:1, offX:0, offY:0,
-          iconImg:null, iconScale:1, iconX:0, iconY:0,
-          iconBehind:true, iconSmooth:true
-        };
-      }
-      active = "300";
-      buildTabs();
-      syncSharedUI();
-      syncUIFromActive();
-      $("statusPill").textContent = "reset";
-      toast("Reset feito");
-      render();
-    });
+    $("downloadOne").addEventListener("click", exportSelected);
+    $("exportAll").addEventListener("click", exportAll);
 
+    // ========= Toggles =========
     $("toggleGuides").addEventListener("click", ()=>{
       shared.guides = !shared.guides;
       $("toggleGuides").textContent = `Guias: ${shared.guides ? "ON" : "OFF"}`;
-      render();
+      renderPreview();
     });
 
     $("toggleBG").addEventListener("click", ()=>{
       shared.previewBG = !shared.previewBG;
-      render();
+      renderPreview();
       toast(`Fundo preview: ${shared.previewBG ? "ON" : "OFF"}`);
     });
 
@@ -937,8 +981,8 @@
       lastY = e.clientY;
 
       const rect = canvas.getBoundingClientRect();
-      const sx = shared.w / rect.width;
-      const sy = shared.h / rect.height;
+      const sx = BASE_W / rect.width;
+      const sy = BASE_H / rect.height;
 
       const jd = per[active];
       if(dragMode === "icon"){
@@ -952,16 +996,61 @@
         $("offX").value = Math.round(jd.offX);
         $("offY").value = Math.round(jd.offY);
       }
-      render();
+      renderPreview();
+    });
+
+    // ========= Reset =========
+    $("reset").addEventListener("click", async ()=>{
+      Object.assign(shared, {
+        fontName:"Arial Black",
+        fontSize:34,
+        tracking:0,
+        skewDeg:0,
+        fill:"#ffffff",
+        strokeW:4,
+        stroke:"#000000",
+        shadowBlur:0,
+        shadowX:0,
+        shadowY:0,
+        shadowColor:"#000000",
+        glowBlur:10,
+        glowColor:"#7c5cff",
+        guides:true,
+        previewBG:false
+      });
+
+      for(const k of keys){
+        per[k] = {
+          text:k,
+          alpha:1,
+          offX:0,
+          offY:0,
+          iconId:"none",
+          iconColor:"#ffffff",
+          iconScale:1,
+          iconX:0,
+          iconY:0,
+          iconBehind:true
+        };
+      }
+
+      active = "300";
+      buildTabs();
+      syncSharedUI();
+      syncUIFromActive();
+      $("statusPill").textContent = "reset";
+      toast("Reset feito");
+      await renderPreview();
     });
 
     // ========= init =========
     (async function init(){
       buildTabs();
+      buildIconPicker();
       syncSharedUI();
       syncUIFromActive();
       await document.fonts.ready;
-      render();
+      await renderPreview();
       toast("Pronto ✅");
     })();
   </script>
