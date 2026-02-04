@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>osu!mania judgement-maker (MASTER @2x)</title>
+  <title>osu!mania judgement-maker</title>
   <style>
     :root{
       --bg:#0b0c0f; --fg:#e8e8e8; --muted:#9aa0a6;
       --panel:rgba(255,255,255,.04); --border:rgba(255,255,255,.10);
-      --accent:#7c5cff; --r:14px;
+      --accent:#7c5cff; --r:14px; --r2:10px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
@@ -35,12 +35,12 @@
     .wrap{
       padding:18px;
       display:grid;
-      grid-template-columns: 430px 1fr;
+      grid-template-columns: 460px 1fr;
       gap:14px;
       align-items:start;
     }
     @media (max-width: 980px){
-      .wrap{grid-template-columns: 1fr; }
+      .wrap{grid-template-columns: 1fr;}
     }
 
     .card{
@@ -58,12 +58,31 @@
     .card .title strong{font-size:13px}
     .card .content{padding:12px}
 
-    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
-    .row3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
+    .tabs{
+      display:flex; flex-wrap:wrap; gap:8px;
+      padding:10px 12px;
+      border-bottom:1px solid var(--border);
+      background:rgba(0,0,0,.14);
+    }
+    .tab{
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.18);
+      padding:8px 10px;
+      border-radius: var(--r2); /* menos redondo */
+      font-family:var(--mono);
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .tab.active{
+      background:rgba(124,92,255,.30);
+      border-color:rgba(124,92,255,.55);
+      color:var(--fg);
+    }
 
     .field{display:flex; flex-direction:column; gap:6px; margin-bottom:10px}
     label{font-size:12px; color:var(--muted)}
-    input[type="text"], input[type="number"], select{
+    input[type="text"], select{
       width:100%;
       padding:10px 10px;
       border-radius:12px;
@@ -71,14 +90,6 @@
       background:rgba(0,0,0,.25);
       color:var(--fg);
       outline:none;
-    }
-    input[type="color"]{
-      width:100%;
-      height:40px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:transparent;
-      padding:4px;
     }
     input[type="file"]{
       width:100%;
@@ -88,6 +99,17 @@
       background:rgba(0,0,0,.18);
       color:var(--muted);
     }
+    input[type="color"]{
+      width:100%;
+      height:40px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:transparent;
+      padding:4px;
+    }
+
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .row3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
 
     .btns{display:flex; flex-wrap:wrap; gap:10px}
     button{
@@ -105,52 +127,23 @@
     button.secondary:hover{background:rgba(255,255,255,.10)}
     button.danger{background:rgba(255,80,80,.15)}
     button.danger:hover{background:rgba(255,80,80,.22)}
-    .small{font-size:12px; color:var(--muted); line-height:1.4}
+
     .pill{
       font-family:var(--mono);
       font-size:11px;
       padding:4px 8px;
-      border-radius:999px;
+      border-radius:12px;
       border:1px solid var(--border);
       background:rgba(0,0,0,.22);
       color:var(--muted);
     }
-
-    .tabs{
-      display:flex; flex-wrap:wrap; gap:8px;
-      padding:10px 12px;
-      border-bottom:1px solid var(--border);
-      background:rgba(0,0,0,.14);
-    }
-    .tab{
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.18);
-      padding:8px 10px;
-      border-radius:999px;
-      font-family:var(--mono);
-      font-size:12px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .tab.active{
-      background:rgba(124,92,255,.30);
-      border-color:rgba(124,92,255,.55);
-      color:var(--fg);
-    }
+    .divider{height:1px; background:var(--border); margin:10px 0}
+    .small{font-size:12px; color:var(--muted); line-height:1.4}
 
     .stage{display:flex; flex-direction:column; gap:12px; padding:12px;}
     .stageTop{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
     .stageTop .left{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
     .stageTop .right{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
-    .kbd{
-      font-family:var(--mono);
-      font-size:11px;
-      color:var(--muted);
-      border:1px solid var(--border);
-      padding:6px 8px;
-      border-radius:10px;
-      background:rgba(0,0,0,.20);
-    }
 
     .canvasWrap{
       border-radius:18px;
@@ -164,12 +157,10 @@
       position:relative;
       padding:18px;
     }
-
-    /* Preview usa o canvas @2x mas exibido grande via CSS */
     canvas{
       display:block;
       width:100%;
-      max-width: 900px;
+      max-width: 980px;
       height:auto;
       margin:0 auto;
       border-radius:14px;
@@ -177,7 +168,23 @@
       image-rendering:auto;
     }
 
-    .divider{height:1px; background:var(--border); margin:10px 0}
+    /* sliders */
+    .sliderRow{
+      display:flex; align-items:center; gap:10px;
+      padding:10px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.22);
+      border-radius:12px;
+    }
+    .sliderRow input[type="range"]{width:100%}
+    .val{
+      font-family:var(--mono);
+      font-size:12px;
+      min-width:52px;
+      text-align:right;
+      color:var(--fg);
+      opacity:.9;
+    }
 
     .toast{
       position:fixed; right:14px; bottom:14px;
@@ -198,7 +205,7 @@
 <body>
 <header>
   <h1>judgement-maker</h1>
-  <span class="hint">Master sempre em @2x (576×112). Normal (288×56) é downscale do master (melhor qualidade).</span>
+  <span class="hint">Export fixo: 288×56 e 576×112 (@2x). Master sempre @2x. Texto/ícone sempre centralizados.</span>
 </header>
 
 <div class="wrap">
@@ -227,18 +234,30 @@
         </div>
       </div>
 
-      <div class="row3">
-        <div class="field">
-          <label>Tamanho (px) — base em 288×56</label>
-          <input id="fontSize" type="number" value="34" min="1" step="1" />
+      <div class="divider"></div>
+
+      <div class="field">
+        <label>Tamanho da fonte</label>
+        <div class="sliderRow">
+          <input id="s_fontSize" type="range" min="0" max="100" value="55" />
+          <div class="val" id="v_fontSize"></div>
         </div>
+      </div>
+
+      <div class="row">
         <div class="field">
           <label>Tracking</label>
-          <input id="tracking" type="number" value="0" step="0.5" />
+          <div class="sliderRow">
+            <input id="s_tracking" type="range" min="0" max="100" value="50" />
+            <div class="val" id="v_tracking"></div>
+          </div>
         </div>
         <div class="field">
-          <label>Inclinação (°)</label>
-          <input id="skewDeg" type="number" value="0" step="0.5" />
+          <label>Inclinação</label>
+          <div class="sliderRow">
+            <input id="s_skew" type="range" min="0" max="100" value="50" />
+            <div class="val" id="v_skew"></div>
+          </div>
         </div>
       </div>
 
@@ -248,8 +267,11 @@
           <input id="fill" type="color" value="#ffffff" />
         </div>
         <div class="field">
-          <label>Outline (px)</label>
-          <input id="strokeW" type="number" value="4" min="0" step="1" />
+          <label>Outline</label>
+          <div class="sliderRow">
+            <input id="s_strokeW" type="range" min="0" max="100" value="35" />
+            <div class="val" id="v_strokeW"></div>
+          </div>
         </div>
         <div class="field">
           <label>Cor do outline</label>
@@ -259,16 +281,25 @@
 
       <div class="row3">
         <div class="field">
-          <label>Sombra (blur)</label>
-          <input id="shadowBlur" type="number" value="0" min="0" step="1" />
+          <label>Sombra blur</label>
+          <div class="sliderRow">
+            <input id="s_shadowBlur" type="range" min="0" max="100" value="0" />
+            <div class="val" id="v_shadowBlur"></div>
+          </div>
         </div>
         <div class="field">
           <label>Sombra X</label>
-          <input id="shadowX" type="number" value="0" step="1" />
+          <div class="sliderRow">
+            <input id="s_shadowX" type="range" min="0" max="100" value="50" />
+            <div class="val" id="v_shadowX"></div>
+          </div>
         </div>
         <div class="field">
           <label>Sombra Y</label>
-          <input id="shadowY" type="number" value="0" step="1" />
+          <div class="sliderRow">
+            <input id="s_shadowY" type="range" min="0" max="100" value="50" />
+            <div class="val" id="v_shadowY"></div>
+          </div>
         </div>
       </div>
 
@@ -278,8 +309,11 @@
           <input id="shadowColor" type="color" value="#000000" />
         </div>
         <div class="field">
-          <label>Glow (blur)</label>
-          <input id="glowBlur" type="number" value="10" min="0" step="1" />
+          <label>Glow blur</label>
+          <div class="sliderRow">
+            <input id="s_glowBlur" type="range" min="0" max="100" value="35" />
+            <div class="val" id="v_glowBlur"></div>
+          </div>
         </div>
         <div class="field">
           <label>Cor do glow</label>
@@ -289,58 +323,33 @@
 
       <div class="divider"></div>
 
-      <div class="row3">
-        <div class="field">
-          <label>Offset X (este judgement)</label>
-          <input id="offX" type="number" value="0" step="1" />
-        </div>
-        <div class="field">
-          <label>Offset Y (este judgement)</label>
-          <input id="offY" type="number" value="0" step="1" />
-        </div>
-        <div class="field">
-          <label>Alpha (este judgement)</label>
-          <input id="alpha" type="number" value="1" min="0" max="1" step="0.05" />
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
       <div class="field">
-        <label>Ícone (embutido) — só deste judgement</label>
-        <select id="iconPick"></select>
+        <label>Ícone (único estilo)</label>
+        <select id="iconPick">
+          <option value="none">Nenhum</option>
+          <option value="pill">Pílula</option>
+          <option value="dot">Bolinha pequena</option>
+        </select>
       </div>
 
       <div class="row3">
+        <div class="field">
+          <label>Cor do ícone</label>
+          <input id="iconColor" type="color" value="#ffffff" />
+        </div>
         <div class="field">
           <label>Ícone escala</label>
-          <input id="iconScale" type="number" value="1" min="0" step="0.05" />
+          <div class="sliderRow">
+            <input id="s_iconScale" type="range" min="0" max="100" value="50" />
+            <div class="val" id="v_iconScale"></div>
+          </div>
         </div>
-        <div class="field">
-          <label>Ícone offset X</label>
-          <input id="iconX" type="number" value="0" step="1" />
-        </div>
-        <div class="field">
-          <label>Ícone offset Y</label>
-          <input id="iconY" type="number" value="0" step="1" />
-        </div>
-      </div>
-
-      <div class="row3">
         <div class="field">
           <label>Ícone atrás do texto?</label>
           <select id="iconBehind">
             <option value="yes" selected>Sim</option>
             <option value="no">Não</option>
           </select>
-        </div>
-        <div class="field">
-          <label>Cor do ícone</label>
-          <input id="iconColor" type="color" value="#ffffff" />
-        </div>
-        <div class="field">
-          <label>Limpar ícone</label>
-          <button class="danger" id="clearIcon" type="button">Limpar</button>
         </div>
       </div>
 
@@ -353,8 +362,8 @@
       </div>
 
       <p class="small">
-        Master: <b>576×112</b> (@2x). Normal: <b>288×56</b> (downscale do master).<br/>
-        Arraste no preview = move texto. Shift+arraste = move ícone.
+        Master sempre em <b>576×112</b>. O arquivo <b>288×56</b> é um downscale do master.<br/>
+        Centralização travada: texto e ícone sempre no centro.
       </p>
     </div>
   </section>
@@ -363,8 +372,7 @@
     <div class="title">
       <strong>Preview</strong>
       <div class="right">
-        <span class="kbd">Arraste = texto</span>
-        <span class="kbd">Shift+arraste = ícone</span>
+        <button id="toggleBG" class="secondary" type="button">Fundo preview</button>
       </div>
     </div>
 
@@ -375,17 +383,13 @@
           <span class="pill" id="fontPill">fonte: Arial Black</span>
           <span class="pill" id="whichPill">editando: 300</span>
         </div>
-        <div class="right">
-          <button id="toggleGuides" class="secondary" type="button">Guias: ON</button>
-          <button id="toggleBG" class="secondary" type="button">Fundo preview</button>
-        </div>
       </div>
 
-      <div class="canvasWrap" id="canvasWrap">
+      <div class="canvasWrap">
         <canvas id="c"></canvas>
       </div>
 
-      <p class="small">Export sai com <b>fundo transparente</b>. Xadrez é só preview.</p>
+      <p class="small">Export sai com fundo transparente. Xadrez é só preview.</p>
     </div>
   </section>
 </div>
@@ -393,6 +397,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  // ================= helpers =================
   const $ = (id)=>document.getElementById(id);
   const toast = (msg)=>{
     const t=$("toast");
@@ -405,269 +410,345 @@
   const sanitizeName=(s)=> (s||"judgement").toString().trim()
     .replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g,"_").slice(0,80) || "judgement";
 
-  // FIXO
-  const BASE_W=288, BASE_H=56;
-  const MASTER_SCALE=2; // master sempre @2x
-  const MASTER_W=BASE_W*MASTER_SCALE, MASTER_H=BASE_H*MASTER_SCALE;
+  // ================= fixed sizes =================
+  const BASE_W = 288, BASE_H = 56;
+  const MASTER_SCALE = 2;
+  const MASTER_W = BASE_W * MASTER_SCALE;
+  const MASTER_H = BASE_H * MASTER_SCALE;
 
-  // ÍCONES (SVG)
-  const ICONS=[
-    {id:"none",name:"Nenhum",svg:""},
-    {id:"star",name:"⭐ Star",svg:`<path d="M50 6 L62 36 L94 38 L69 58 L77 90 L50 73 L23 90 L31 58 L6 38 L38 36 Z"/>`},
-    {id:"diamond",name:"◆ Diamond",svg:`<path d="M50 6 L92 50 L50 94 L8 50 Z"/>`},
-    {id:"circle",name:"● Circle",svg:`<circle cx="50" cy="50" r="38"/>`},
-    {id:"triangle",name:"▲ Triangle",svg:`<path d="M50 10 L92 86 L8 86 Z"/>`},
-    {id:"crown",name:"👑 Crown",svg:`<path d="M12 72 L18 28 L36 48 L50 22 L64 48 L82 28 L88 72 Z"/><rect x="16" y="72" width="68" height="16" rx="4"/>`},
-    {id:"bolt",name:"⚡ Bolt",svg:`<path d="M58 6 L18 58 L46 58 L40 94 L82 40 L54 40 Z"/>`},
-    {id:"heart",name:"♥ Heart",svg:`<path d="M50 88 C20 66 12 52 12 38 C12 25 21 16 34 16 C42 16 48 20 50 24 C52 20 58 16 66 16 C79 16 88 25 88 38 C88 52 80 66 50 88 Z"/>`},
-    {id:"x",name:"✖ X",svg:`<path d="M22 18 L50 46 L78 18 L90 30 L62 58 L90 86 L78 98 L50 70 L22 98 L10 86 L38 58 L10 30 Z"/>`},
-    {id:"plus",name:"＋ Plus",svg:`<path d="M44 12 H56 V44 H88 V56 H56 V88 H44 V56 H12 V44 H44 Z"/>`},
-    {id:"bang",name:"❗ Exclam",svg:`<rect x="44" y="10" width="12" height="58" rx="6"/><circle cx="50" cy="80" r="8"/>`}
-  ];
-
-  function makeSvgDataUrl(iconId,color){
-    const icon=ICONS.find(x=>x.id===iconId);
-    if(!icon||!icon.svg) return null;
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="${color}">${icon.svg}</g></svg>`;
-    const encoded=encodeURIComponent(svg).replace(/'/g,"%27").replace(/"/g,"%22");
-    return `data:image/svg+xml;charset=utf-8,${encoded}`;
-  }
-  const iconImgCache=new Map();
-  async function getIconImage(iconId,color){
-    if(!iconId||iconId==="none") return null;
-    const key=`${iconId}|${color}`;
-    if(iconImgCache.has(key)) return iconImgCache.get(key);
-    const url=makeSvgDataUrl(iconId,color);
-    if(!url) return null;
-    const img=new Image(); img.decoding="async";
-    const p=new Promise((res,rej)=>{img.onload=()=>res(img); img.onerror=rej;});
-    img.src=url;
-    const loaded=await p;
-    iconImgCache.set(key,loaded);
-    return loaded;
-  }
-
-  // estilo (em unidades base 288x56)
-  const shared={
-    fontName:"Arial Black",
-    fontSize:34,
-    tracking:0,
-    skewDeg:0,
-    fill:"#ffffff",
-    strokeW:4,
-    stroke:"#000000",
-    shadowBlur:0,
-    shadowX:0,
-    shadowY:0,
-    shadowColor:"#000000",
-    glowBlur:10,
-    glowColor:"#7c5cff",
-    guides:true,
-    previewBG:false
-  };
-
-  // por judgement
-  const keys=["0","50","100","200","300","300g"];
-  const per={};
+  // ================= state =================
+  const keys = ["0","50","100","200","300","300g"];
+  const per = {};
   for(const k of keys){
-    per[k]={
-      text:k, alpha:1, offX:0, offY:0,
-      iconId:"none", iconColor:"#ffffff",
-      iconScale:1, iconX:0, iconY:0,
-      iconBehind:true
+    per[k] = {
+      text: k,
+      icon: "none",         // none | pill | dot
+      iconColor: "#ffffff",
+      iconScale01: 0.50,    // 0..1
+      iconBehind: true
     };
   }
-  let active="300";
+  let active = "300";
 
-  // canvas principal (preview) = master @2x
-  const canvas=$("c");
-  const ctx=canvas.getContext("2d");
+  // ================= sliders mapping (0..100) =================
+  // Cada slider é 0..100, mas internamente mapeamos pra um range útil.
+  // Isso atende seu pedido: "barra de drag 0 a 100 em todas as opções".
+  const shared = {
+    fontName: "Arial Black",
+    previewBG: false,
 
-  // canvases offscreen pro export (master + downscale)
-  const masterCanvas=document.createElement("canvas");
-  const masterCtx=masterCanvas.getContext("2d");
-  const downCanvas=document.createElement("canvas");
-  const downCtx=downCanvas.getContext("2d");
+    // internal numeric values
+    fontSize: 34,       // base units (288x56)
+    tracking: 0,        // px
+    skewDeg: 0,         // degrees
 
-  function setupMasterContext(c, scale){
-    c.font = `${shared.fontSize*scale}px "${shared.fontName}"`;
-    c.textAlign="center";
-    c.textBaseline="alphabetic";
-    c.lineJoin="round";
-    c.lineCap="round";
+    fill: "#ffffff",
+    strokeW: 4,         // px
+    stroke: "#000000",
+
+    shadowBlur: 0,      // px
+    shadowX: 0,         // px
+    shadowY: 0,         // px
+    shadowColor: "#000000",
+
+    glowBlur: 10,       // px
+    glowColor: "#7c5cff",
+  };
+
+  // Map functions (slider 0..100 -> value)
+  const map = {
+    fontSize: (s)=> 18 + (s/100) * 52,           // 18..70
+    tracking: (s)=> ((s-50)/50) * 8,             // -8..+8
+    skewDeg:  (s)=> ((s-50)/50) * 14,            // -14..+14
+
+    strokeW:  (s)=> (s/100) * 10,                // 0..10
+    glowBlur: (s)=> (s/100) * 22,                // 0..22
+
+    shadowBlur:(s)=> (s/100) * 18,               // 0..18
+    shadowX:   (s)=> ((s-50)/50) * 10,           // -10..+10
+    shadowY:   (s)=> ((s-50)/50) * 10,           // -10..+10
+
+    iconScale01:(s)=> (s/100),                   // 0..1
+  };
+
+  // ================= canvas setup =================
+  const canvas = $("c");
+  const ctx = canvas.getContext("2d");
+
+  // offscreen: mask + work buffers + export buffers
+  const maskC = document.createElement("canvas");
+  const maskX = maskC.getContext("2d");
+
+  const workC = document.createElement("canvas");
+  const workX = workC.getContext("2d");
+
+  const masterC = document.createElement("canvas");
+  const masterX = masterC.getContext("2d");
+
+  const downC = document.createElement("canvas");
+  const downX = downC.getContext("2d");
+
+  function setSize(cnv, w, h){
+    cnv.width = w; cnv.height = h;
   }
 
-  function clearCtx(c, W, H){
-    c.clearRect(0,0,W,H);
+  function clearCtx(x, w, h){
+    x.clearRect(0,0,w,h);
     if(shared.previewBG){
-      c.save();
-      c.fillStyle="rgba(0,0,0,.35)";
-      c.fillRect(0,0,W,H);
-      c.restore();
+      x.save();
+      x.fillStyle = "rgba(0,0,0,.35)";
+      x.fillRect(0,0,w,h);
+      x.restore();
     }
   }
 
-  function drawGuidesOn(c, W, H, scale){
-    if(!shared.guides) return;
-    c.save();
-    c.globalAlpha=0.55;
-    c.lineWidth=Math.max(1,scale);
-    c.beginPath();
-    c.moveTo(W/2,0); c.lineTo(W/2,H);
-    c.moveTo(0,H/2); c.lineTo(W,H/2);
-    c.strokeStyle="rgba(255,255,255,.25)";
-    c.stroke();
-    const pad=6*scale;
-    c.strokeStyle="rgba(124,92,255,.35)";
-    c.strokeRect(pad,pad,W-pad*2,H-pad*2);
-    c.restore();
+  // ================= drawing primitives =================
+  function drawIconShape(x, W, H, scale, icon, color, scale01){
+    if(icon === "none") return;
+
+    const cx = W/2;
+    const cy = H/2;
+
+    x.save();
+    x.fillStyle = color;
+
+    if(icon === "pill"){
+      // pill horizontal: size tuned for judgement area
+      const baseW = 84 * scale;
+      const baseH = 22 * scale;
+      const w = baseW * (0.35 + 1.25*scale01);  // never too tiny
+      const h = baseH * (0.35 + 1.25*scale01);
+      const rx = h/2;
+
+      const px = cx - w/2;
+      const py = cy - h/2;
+
+      // rounded rect
+      x.beginPath();
+      x.moveTo(px+rx, py);
+      x.lineTo(px+w-rx, py);
+      x.quadraticCurveTo(px+w, py, px+w, py+rx);
+      x.lineTo(px+w, py+h-rx);
+      x.quadraticCurveTo(px+w, py+h, px+w-rx, py+h);
+      x.lineTo(px+rx, py+h);
+      x.quadraticCurveTo(px, py+h, px, py+h-rx);
+      x.lineTo(px, py+rx);
+      x.quadraticCurveTo(px, py, px+rx, py);
+      x.closePath();
+      x.fill();
+    }else if(icon === "dot"){
+      // small dot
+      const r = (6 * scale) * (0.35 + 1.6*scale01);
+      x.beginPath();
+      x.arc(cx, cy, r, 0, Math.PI*2);
+      x.fill();
+    }
+
+    x.restore();
   }
 
-  function measureBoxWith(c, text){
-    const m=c.measureText(text);
-    const ascent=(m.actualBoundingBoxAscent ?? m.fontBoundingBoxAscent ?? (shared.fontSize*0.8));
-    const descent=(m.actualBoundingBoxDescent ?? m.fontBoundingBoxDescent ?? (shared.fontSize*0.2));
-    return {ascent,descent};
+  function setupTextCtx(x, scale){
+    x.font = `${shared.fontSize*scale}px "${shared.fontName}"`;
+    x.textAlign = "center";
+    x.textBaseline = "alphabetic";
   }
 
-  function drawTextWithTracking(c, text, x, y, tracking, strokeOnly, fillOnly){
-    if(!text) return;
+  // Render text mask (white) centered, snapped to integer pixels (reduz blur)
+  function renderTextMask(x, W, H, scale, text){
+    clearCtx(x, W, H);
+    x.save();
+    setupTextCtx(x, scale);
+    x.fillStyle = "#ffffff";
+
+    const m = x.measureText(text);
+    const ascent  = (m.actualBoundingBoxAscent ?? m.fontBoundingBoxAscent ?? (shared.fontSize*0.8));
+    const descent = (m.actualBoundingBoxDescent ?? m.fontBoundingBoxDescent ?? (shared.fontSize*0.2));
+
+    const baselineToMiddle = (ascent - descent)/2;
+
+    // centralização travada
+    const cx = Math.round(W/2); // snapping
+    const y0 = Math.round(H/2 + baselineToMiddle);
+
+    // tracking manual
+    const tracking = shared.tracking * scale;
+
     if(!tracking){
-      if(strokeOnly) c.strokeText(text,x,y);
-      if(fillOnly) c.fillText(text,x,y);
+      x.fillText(text, cx, y0);
+    }else{
+      const chars=[...text];
+      const widths=chars.map(ch=>x.measureText(ch).width);
+      const total=widths.reduce((a,b)=>a+b,0)+tracking*(chars.length-1);
+      let startX = cx - total/2;
+      for(let i=0;i<chars.length;i++){
+        const px = startX + widths[i]/2;
+        x.fillText(chars[i], px, y0);
+        startX += widths[i] + tracking;
+      }
+    }
+
+    x.restore();
+  }
+
+  // Expand mask by radius using multi-offset stamping (outline backbone)
+  function expandMaskTo(x, W, H, radiusPx){
+    // x already cleared by caller
+    x.save();
+    x.globalCompositeOperation = "source-over";
+    x.imageSmoothingEnabled = true;
+
+    const r = Math.max(0, Math.round(radiusPx));
+    if(r === 0){
+      x.drawImage(maskC, 0,0);
+      x.restore();
       return;
     }
-    const chars=[...text];
-    const widths=chars.map(ch=>c.measureText(ch).width);
-    const total=widths.reduce((a,b)=>a+b,0)+tracking*(chars.length-1);
-    let startX=x-total/2;
-    for(let i=0;i<chars.length;i++){
-      const cx=startX+widths[i]/2;
-      if(strokeOnly) c.strokeText(chars[i],cx,y);
-      if(fillOnly) c.fillText(chars[i],cx,y);
-      startX += widths[i] + tracking;
+
+    // stamp in a disk-ish pattern
+    for(let dy=-r; dy<=r; dy++){
+      for(let dx=-r; dx<=r; dx++){
+        if(dx*dx + dy*dy > r*r) continue;
+        x.drawImage(maskC, dx, dy);
+      }
     }
+    x.restore();
   }
 
-  async function drawIcon(c, centerX, centerY, scale, jd){
-    if(!jd.iconId || jd.iconId==="none") return;
-    const img=await getIconImage(jd.iconId, jd.iconColor);
-    if(!img) return;
-    const ICON_BASE_PX=36; // em px do 288x56
-    const px=ICON_BASE_PX*jd.iconScale*scale;
-    const x=centerX - px/2 + (jd.iconX*scale);
-    const y=centerY - px/2 + (jd.iconY*scale);
-    c.save();
-    c.globalAlpha=clamp(jd.alpha,0,1);
-    c.imageSmoothingEnabled=true;
-    c.drawImage(img,x,y,px,px);
-    c.restore();
+  function tintMaskTo(x, W, H, color){
+    x.save();
+    x.globalCompositeOperation = "source-in";
+    x.fillStyle = color;
+    x.fillRect(0,0,W,H);
+    x.restore();
   }
 
-  async function drawJudgementOn(c, W, H, scale, key){
-    const jd=per[key];
-    setupMasterContext(c, scale);
+  function drawGlowFromMask(targetX, W, H, scale){
+    const blur = Math.max(0, shared.glowBlur * scale);
+    if(blur <= 0) return;
 
-    const centerX = W/2 + (jd.offX*scale);
-    const centerY = H/2 + (jd.offY*scale);
+    // draw tinted mask with shadowBlur = glow
+    targetX.save();
+    targetX.shadowBlur = blur;
+    targetX.shadowColor = shared.glowColor;
+    targetX.shadowOffsetX = 0;
+    targetX.shadowOffsetY = 0;
+    targetX.globalAlpha = 1;
 
-    const text=jd.text ?? "";
-    const tracking=(Number(shared.tracking||0) * scale);
-    const fontSize=shared.fontSize*scale;
+    // draw a solid rect clipped by mask, so shadow uses mask silhouette
+    // (we use workC as mask->color)
+    clearCtx(workX, W, H);
+    workX.drawImage(maskC, 0,0);
+    tintMaskTo(workX, W, H, "#ffffff");
 
-    // skew
-    const skew=Math.tan((Number(shared.skewDeg)||0)*Math.PI/180);
+    // drawing the mask onto target triggers the shadow glow
+    targetX.drawImage(workC, 0,0);
+    targetX.restore();
+  }
 
-    // medir “centro real”
-    c.save();
-    c.font = `${fontSize}px "${shared.fontName}"`;
-    const box=measureBoxWith(c, text);
-    c.restore();
-    const baselineToMiddle=(box.ascent - box.descent)/2;
-    const x0=centerX;
-    const y0=centerY + baselineToMiddle;
+  function drawShadowFromMask(targetX, W, H, scale){
+    const blur = Math.max(0, shared.shadowBlur * scale);
+    const ox = shared.shadowX * scale;
+    const oy = shared.shadowY * scale;
+    if(blur <= 0 && ox === 0 && oy === 0) return;
 
-    if(jd.iconBehind) await drawIcon(c, centerX, centerY, scale, jd);
+    targetX.save();
+    targetX.shadowBlur = blur;
+    targetX.shadowColor = shared.shadowColor;
+    targetX.shadowOffsetX = ox;
+    targetX.shadowOffsetY = oy;
 
-    c.save();
-    c.globalAlpha=clamp(jd.alpha,0,1);
-    c.font = `${fontSize}px "${shared.fontName}"`;
-    c.textAlign="center";
-    c.textBaseline="alphabetic";
+    clearCtx(workX, W, H);
+    workX.drawImage(maskC, 0,0);
+    tintMaskTo(workX, W, H, "#ffffff");
 
-    // aplica skew no contexto (mantém coordenadas)
-    c.transform(1, 0, skew, 1, 0, 0);
+    targetX.drawImage(workC, 0,0);
+    targetX.restore();
+  }
 
-    // glow
-    if(Number(shared.glowBlur)>0){
-      c.save();
-      c.shadowBlur=Number(shared.glowBlur)*scale;
-      c.shadowColor=shared.glowColor;
-      c.fillStyle=shared.fill;
-      drawTextWithTracking(c, text, x0, y0, tracking, false, true);
-      c.restore();
+  function drawOutlineFromMask(targetX, W, H, scale){
+    const outlinePx = Math.max(0, shared.strokeW * scale);
+    if(outlinePx <= 0) return;
+
+    // expanded mask into workC
+    clearCtx(workX, W, H);
+    expandMaskTo(workX, W, H, outlinePx);
+
+    // subtract original mask -> keep only border
+    workX.save();
+    workX.globalCompositeOperation = "destination-out";
+    workX.drawImage(maskC, 0,0);
+    workX.restore();
+
+    // tint border
+    tintMaskTo(workX, W, H, shared.stroke);
+
+    targetX.drawImage(workC, 0,0);
+  }
+
+  function drawFillFromMask(targetX, W, H){
+    clearCtx(workX, W, H);
+    workX.drawImage(maskC, 0,0);
+    tintMaskTo(workX, W, H, shared.fill);
+    targetX.drawImage(workC, 0,0);
+  }
+
+  async function renderMaster(key){
+    setSize(masterC, MASTER_W, MASTER_H);
+    clearCtx(masterX, MASTER_W, MASTER_H);
+
+    const jd = per[key];
+    const scale = MASTER_SCALE;
+
+    // icon behind
+    if(jd.iconBehind){
+      drawIconShape(masterX, MASTER_W, MASTER_H, scale, jd.icon, jd.iconColor, jd.iconScale01);
     }
 
-    // shadow
-    if(Number(shared.shadowBlur)>0 || Number(shared.shadowX)!==0 || Number(shared.shadowY)!==0){
-      c.save();
-      c.shadowBlur=Number(shared.shadowBlur)*scale;
-      c.shadowColor=shared.shadowColor;
-      c.shadowOffsetX=Number(shared.shadowX)*scale;
-      c.shadowOffsetY=Number(shared.shadowY)*scale;
-      c.fillStyle=shared.fill;
-      drawTextWithTracking(c, text, x0, y0, tracking, false, true);
-      c.restore();
+    // text pipeline
+    setSize(maskC, MASTER_W, MASTER_H);
+    setSize(workC, MASTER_W, MASTER_H);
+    renderTextMask(maskX, MASTER_W, MASTER_H, scale, jd.text);
+
+    // order: shadow -> glow -> outline -> fill (fica mais definido)
+    drawShadowFromMask(masterX, MASTER_W, MASTER_H, scale);
+    drawGlowFromMask(masterX, MASTER_W, MASTER_H, scale);
+    drawOutlineFromMask(masterX, MASTER_W, MASTER_H, scale);
+    drawFillFromMask(masterX, MASTER_W, MASTER_H);
+
+    // icon front
+    if(!jd.iconBehind){
+      drawIconShape(masterX, MASTER_W, MASTER_H, scale, jd.icon, jd.iconColor, jd.iconScale01);
     }
 
-    // outline
-    if(Number(shared.strokeW)>0){
-      c.lineWidth=Number(shared.strokeW)*scale;
-      c.strokeStyle=shared.stroke;
-      drawTextWithTracking(c, text, x0, y0, tracking, true, false);
-    }
-
-    // fill
-    c.fillStyle=shared.fill;
-    drawTextWithTracking(c, text, x0, y0, tracking, false, true);
-
-    c.restore();
-
-    if(!jd.iconBehind) await drawIcon(c, centerX, centerY, scale, jd);
+    return masterC;
   }
 
   async function renderPreview(){
-    canvas.width=MASTER_W;
-    canvas.height=MASTER_H;
+    canvas.width = MASTER_W;
+    canvas.height = MASTER_H;
     clearCtx(ctx, MASTER_W, MASTER_H);
-    await drawJudgementOn(ctx, MASTER_W, MASTER_H, MASTER_SCALE, active);
-    drawGuidesOn(ctx, MASTER_W, MASTER_H, MASTER_SCALE);
-    $("fontPill").textContent=`fonte: ${shared.fontName}`;
-    $("whichPill").textContent=`editando: ${active}`;
+
+    const master = await renderMaster(active);
+    ctx.drawImage(master, 0,0);
+
+    $("fontPill").textContent = `fonte: ${shared.fontName}`;
+    $("whichPill").textContent = `editando: ${active}`;
   }
 
   function canvasToBlob(cnv){
-    return new Promise((resolve)=> cnv.toBlob(b=>resolve(b), "image/png"));
+    return new Promise((resolve)=>cnv.toBlob(b=>resolve(b), "image/png"));
   }
 
-  // Render MASTER (@2x) para um key
-  async function renderMasterToCanvas(key){
-    masterCanvas.width=MASTER_W;
-    masterCanvas.height=MASTER_H;
-    clearCtx(masterCtx, MASTER_W, MASTER_H);
-    await drawJudgementOn(masterCtx, MASTER_W, MASTER_H, MASTER_SCALE, key);
-    return masterCanvas;
-  }
-
-  // Downscale MASTER -> normal 288x56
   async function renderNormalFromMaster(master){
-    downCanvas.width=BASE_W;
-    downCanvas.height=BASE_H;
-    downCtx.clearRect(0,0,BASE_W,BASE_H);
-    downCtx.imageSmoothingEnabled=true;
-    downCtx.imageSmoothingQuality="high";
-    downCtx.drawImage(master, 0,0, MASTER_W,MASTER_H, 0,0, BASE_W,BASE_H);
-    return downCanvas;
+    setSize(downC, BASE_W, BASE_H);
+    downX.clearRect(0,0,BASE_W,BASE_H);
+
+    // downscale com qualidade alta (sem mudar pixels)
+    downX.imageSmoothingEnabled = true;
+    downX.imageSmoothingQuality = "high";
+    downX.drawImage(master, 0,0, MASTER_W,MASTER_H, 0,0, BASE_W,BASE_H);
+
+    return downC;
   }
 
   function downloadBlob(blob, filename){
@@ -679,16 +760,16 @@
     setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 200);
   }
 
-  // Tabs
+  // ================= UI build =================
   function buildTabs(){
-    const root=$("tabs");
-    root.innerHTML="";
+    const root = $("tabs");
+    root.innerHTML = "";
     for(const k of keys){
       const b=document.createElement("div");
       b.className="tab"+(k===active?" active":"");
       b.textContent=k;
       b.addEventListener("click", ()=>{
-        active=k;
+        active = k;
         syncUIFromActive();
         buildTabs();
         renderPreview();
@@ -697,238 +778,201 @@
     }
   }
 
-  // Icon picker
-  function buildIconPicker(){
-    const sel=$("iconPick");
-    sel.innerHTML="";
-    for(const it of ICONS){
-      const o=document.createElement("option");
-      o.value=it.id;
-      o.textContent=it.name;
-      sel.appendChild(o);
-    }
-  }
-
-  // UI sync
   function syncUIFromActive(){
-    const jd=per[active];
-    $("txt").value=jd.text;
-    $("offX").value=jd.offX;
-    $("offY").value=jd.offY;
-    $("alpha").value=jd.alpha;
+    const jd = per[active];
+    $("txt").value = jd.text;
+    $("iconPick").value = jd.icon;
+    $("iconColor").value = jd.iconColor;
+    $("iconBehind").value = jd.iconBehind ? "yes" : "no";
 
-    $("iconPick").value=jd.iconId||"none";
-    $("iconColor").value=jd.iconColor||"#ffffff";
-    $("iconScale").value=jd.iconScale;
-    $("iconX").value=jd.iconX;
-    $("iconY").value=jd.iconY;
-    $("iconBehind").value=jd.iconBehind ? "yes" : "no";
+    // slider icon
+    $("s_iconScale").value = Math.round(jd.iconScale01*100);
+    updateSliderLabels();
   }
 
-  function syncSharedUI(){
-    $("fontName").value=shared.fontName;
-    $("fontSize").value=shared.fontSize;
-    $("tracking").value=shared.tracking;
-    $("skewDeg").value=shared.skewDeg;
-
-    $("fill").value=shared.fill;
-    $("strokeW").value=shared.strokeW;
-    $("stroke").value=shared.stroke;
-
-    $("shadowBlur").value=shared.shadowBlur;
-    $("shadowX").value=shared.shadowX;
-    $("shadowY").value=shared.shadowY;
-    $("shadowColor").value=shared.shadowColor;
-
-    $("glowBlur").value=shared.glowBlur;
-    $("glowColor").value=shared.glowColor;
-
-    $("toggleGuides").textContent=`Guias: ${shared.guides ? "ON":"OFF"}`;
+  function updateSliderLabels(){
+    $("v_fontSize").textContent = `${shared.fontSize.toFixed(0)}px`;
+    $("v_tracking").textContent = `${shared.tracking.toFixed(1)}`;
+    $("v_skew").textContent = `${shared.skewDeg.toFixed(1)}°`;
+    $("v_strokeW").textContent = `${shared.strokeW.toFixed(1)}`;
+    $("v_glowBlur").textContent = `${shared.glowBlur.toFixed(1)}`;
+    $("v_shadowBlur").textContent = `${shared.shadowBlur.toFixed(1)}`;
+    $("v_shadowX").textContent = `${shared.shadowX.toFixed(1)}`;
+    $("v_shadowY").textContent = `${shared.shadowY.toFixed(1)}`;
+    $("v_iconScale").textContent = `${(per[active].iconScale01*100).toFixed(0)}%`;
   }
 
-  // Bind shared
-  const bindShared=(id,key,parser=(v)=>v)=>{
+  // ================= slider bindings (0..100 everywhere) =================
+  function bindSlider(id, apply){
     const el=$(id);
-    const read=()=>{ shared[key]=parser(el.value); renderPreview(); };
-    el.addEventListener("input",read);
-    el.addEventListener("change",read);
-  };
-  bindShared("fontName","fontName",v=>v);
-  bindShared("fontSize","fontSize",v=>Number(v||0));
-  bindShared("tracking","tracking",v=>Number(v||0));
-  bindShared("skewDeg","skewDeg",v=>Number(v||0));
-  bindShared("fill","fill",v=>v);
-  bindShared("strokeW","strokeW",v=>Number(v||0));
-  bindShared("stroke","stroke",v=>v);
-  bindShared("shadowBlur","shadowBlur",v=>Number(v||0));
-  bindShared("shadowX","shadowX",v=>Number(v||0));
-  bindShared("shadowY","shadowY",v=>Number(v||0));
-  bindShared("shadowColor","shadowColor",v=>v);
-  bindShared("glowBlur","glowBlur",v=>Number(v||0));
-  bindShared("glowColor","glowColor",v=>v);
+    const run=()=>{
+      apply(Number(el.value));
+      updateSliderLabels();
+      renderPreview();
+    };
+    el.addEventListener("input", run);
+    el.addEventListener("change", run);
+  }
 
-  // Bind per
-  const bindPer=(id,setter)=>{
-    const el=$(id);
-    const read=()=>{ setter(el.value); renderPreview(); };
-    el.addEventListener("input",read);
-    el.addEventListener("change",read);
-  };
-  bindPer("txt", v=>per[active].text=v);
-  bindPer("offX", v=>per[active].offX=Number(v||0));
-  bindPer("offY", v=>per[active].offY=Number(v||0));
-  bindPer("alpha", v=>per[active].alpha=Number(v||1));
-  bindPer("iconScale", v=>per[active].iconScale=Number(v||1));
-  bindPer("iconX", v=>per[active].iconX=Number(v||0));
-  bindPer("iconY", v=>per[active].iconY=Number(v||0));
-  bindPer("iconColor", v=>per[active].iconColor=v);
+  bindSlider("s_fontSize", (s)=> shared.fontSize = map.fontSize(s));
+  bindSlider("s_tracking", (s)=> shared.tracking = map.tracking(s));
+  bindSlider("s_skew",    (s)=> shared.skewDeg  = map.skewDeg(s));
+  bindSlider("s_strokeW", (s)=> shared.strokeW  = map.strokeW(s));
+  bindSlider("s_glowBlur",(s)=> shared.glowBlur = map.glowBlur(s));
+  bindSlider("s_shadowBlur",(s)=> shared.shadowBlur = map.shadowBlur(s));
+  bindSlider("s_shadowX", (s)=> shared.shadowX = map.shadowX(s));
+  bindSlider("s_shadowY", (s)=> shared.shadowY = map.shadowY(s));
 
-  $("iconPick").addEventListener("change",(e)=>{
-    per[active].iconId=e.target.value||"none";
+  bindSlider("s_iconScale", (s)=> per[active].iconScale01 = map.iconScale01(s));
+
+  // ================= other bindings =================
+  $("txt").addEventListener("input", (e)=>{
+    per[active].text = e.target.value;
     renderPreview();
   });
-  $("iconBehind").addEventListener("change",(e)=>{
-    per[active].iconBehind=(e.target.value==="yes");
+
+  $("fontName").addEventListener("input", (e)=>{
+    shared.fontName = e.target.value || "Arial Black";
     renderPreview();
-  });
-  $("clearIcon").addEventListener("click", ()=>{
-    per[active].iconId="none";
-    $("iconPick").value="none";
-    renderPreview();
-    toast(`Ícone limpo (${active})`);
   });
 
-  // Font upload
+  $("fill").addEventListener("input", (e)=>{ shared.fill = e.target.value; renderPreview(); });
+  $("stroke").addEventListener("input", (e)=>{ shared.stroke = e.target.value; renderPreview(); });
+  $("shadowColor").addEventListener("input", (e)=>{ shared.shadowColor = e.target.value; renderPreview(); });
+  $("glowColor").addEventListener("input", (e)=>{ shared.glowColor = e.target.value; renderPreview(); });
+
+  $("iconPick").addEventListener("change", (e)=>{
+    per[active].icon = e.target.value;
+    renderPreview();
+  });
+  $("iconColor").addEventListener("input", (e)=>{
+    per[active].iconColor = e.target.value;
+    renderPreview();
+  });
+  $("iconBehind").addEventListener("change", (e)=>{
+    per[active].iconBehind = (e.target.value === "yes");
+    renderPreview();
+  });
+
+  $("toggleBG").addEventListener("click", ()=>{
+    shared.previewBG = !shared.previewBG;
+    renderPreview();
+    toast(`Fundo preview: ${shared.previewBG ? "ON" : "OFF"}`);
+  });
+
+  // ================= font upload =================
   $("fontFile").addEventListener("change", async (e)=>{
-    const file=e.target.files?.[0];
+    const file = e.target.files?.[0];
     if(!file) return;
     try{
-      const buf=await file.arrayBuffer();
-      const fname=file.name.replace(/\.(ttf|otf)$/i,"");
-      const face=new FontFace(fname, buf);
-      $("statusPill").textContent="carregando fonte…";
+      const buf = await file.arrayBuffer();
+      const fname = file.name.replace(/\.(ttf|otf)$/i,"");
+      const face = new FontFace(fname, buf);
+      $("statusPill").textContent = "carregando fonte…";
       await face.load();
       document.fonts.add(face);
-      shared.fontName=fname;
-      $("fontName").value=fname;
-      $("statusPill").textContent="fonte ok";
+      shared.fontName = fname;
+      $("fontName").value = fname;
+      $("statusPill").textContent = "fonte ok";
       toast("Fonte carregada ✅");
       await document.fonts.ready;
       renderPreview();
     }catch(err){
       console.error(err);
-      $("statusPill").textContent="erro fonte";
+      $("statusPill").textContent = "erro fonte";
       toast("Falha ao carregar fonte 😵");
     }
   });
 
-  // Export (master -> normal)
+  // ================= export =================
   async function exportOne(key){
-    const master=await renderMasterToCanvas(key);
-    const normal=await renderNormalFromMaster(master);
+    const master = await renderMaster(key);
+    const normal = await renderNormalFromMaster(master);
 
-    const bNormal=await canvasToBlob(normal);
-    downloadBlob(bNormal, `${sanitizeName(key)}.png`);
+    const b1 = await canvasToBlob(normal);
+    downloadBlob(b1, `${sanitizeName(key)}.png`);
     await sleep(140);
 
-    const b2x=await canvasToBlob(master);
-    downloadBlob(b2x, `${sanitizeName(key)}@2x.png`);
+    const b2 = await canvasToBlob(master);
+    downloadBlob(b2, `${sanitizeName(key)}@2x.png`);
   }
 
-  async function exportSelected(){
+  $("downloadOne").addEventListener("click", async ()=>{
     await exportOne(active);
     toast(`Baixando ${active} + @2x…`);
     await renderPreview();
-  }
+  });
 
-  async function exportAll(){
+  $("exportAll").addEventListener("click", async ()=>{
     for(const k of keys){
       await exportOne(k);
       await sleep(180);
     }
     toast("Exportou 12 PNGs ✅");
     await renderPreview();
-  }
-
-  $("downloadOne").addEventListener("click", exportSelected);
-  $("exportAll").addEventListener("click", exportAll);
-
-  // Toggles
-  $("toggleGuides").addEventListener("click", ()=>{
-    shared.guides=!shared.guides;
-    $("toggleGuides").textContent=`Guias: ${shared.guides ? "ON":"OFF"}`;
-    renderPreview();
-  });
-  $("toggleBG").addEventListener("click", ()=>{
-    shared.previewBG=!shared.previewBG;
-    renderPreview();
-    toast(`Fundo preview: ${shared.previewBG ? "ON":"OFF"}`);
   });
 
-  // Drag offsets (em unidades base; preview é @2x, então converte)
-  let dragging=false;
-  let dragMode="text";
-  let lastX=0,lastY=0;
-
-  $("canvasWrap").addEventListener("mousedown",(e)=>{
-    dragging=true;
-    dragMode=e.shiftKey ? "icon":"text";
-    lastX=e.clientX; lastY=e.clientY;
-    e.preventDefault();
-  });
-  window.addEventListener("mouseup",()=>dragging=false);
-  window.addEventListener("mousemove",(e)=>{
-    if(!dragging) return;
-    const dx=e.clientX-lastX, dy=e.clientY-lastY;
-    lastX=e.clientX; lastY=e.clientY;
-
-    const rect=canvas.getBoundingClientRect();
-    const sx=BASE_W / rect.width;
-    const sy=BASE_H / rect.height;
-
-    const jd=per[active];
-    if(dragMode==="icon"){
-      jd.iconX += dx*sx;
-      jd.iconY += dy*sy;
-      $("iconX").value=Math.round(jd.iconX);
-      $("iconY").value=Math.round(jd.iconY);
-    }else{
-      jd.offX += dx*sx;
-      jd.offY += dy*sy;
-      $("offX").value=Math.round(jd.offX);
-      $("offY").value=Math.round(jd.offY);
-    }
-    renderPreview();
-  });
-
-  // Reset
   $("reset").addEventListener("click", async ()=>{
-    Object.assign(shared,{
-      fontName:"Arial Black", fontSize:34, tracking:0, skewDeg:0,
-      fill:"#ffffff", strokeW:4, stroke:"#000000",
-      shadowBlur:0, shadowX:0, shadowY:0, shadowColor:"#000000",
-      glowBlur:10, glowColor:"#7c5cff",
-      guides:true, previewBG:false
-    });
+    // reset sliders (0..100) to defaults
+    $("s_fontSize").value = 55;   // ~34px
+    $("s_tracking").value = 50;   // 0
+    $("s_skew").value = 50;       // 0
+    $("s_strokeW").value = 35;    // ~3.5
+    $("s_glowBlur").value = 35;   // ~7.7
+    $("s_shadowBlur").value = 0;
+    $("s_shadowX").value = 50;
+    $("s_shadowY").value = 50;
+
+    shared.fontName = "Arial Black";
+    $("fontName").value = shared.fontName;
+
+    shared.fill = "#ffffff"; $("fill").value = shared.fill;
+    shared.stroke = "#000000"; $("stroke").value = shared.stroke;
+    shared.shadowColor = "#000000"; $("shadowColor").value = shared.shadowColor;
+    shared.glowColor = "#7c5cff"; $("glowColor").value = shared.glowColor;
+
+    // apply mappings
+    shared.fontSize = map.fontSize(Number($("s_fontSize").value));
+    shared.tracking = map.tracking(Number($("s_tracking").value));
+    shared.skewDeg = map.skewDeg(Number($("s_skew").value));
+    shared.strokeW = map.strokeW(Number($("s_strokeW").value));
+    shared.glowBlur = map.glowBlur(Number($("s_glowBlur").value));
+    shared.shadowBlur = map.shadowBlur(Number($("s_shadowBlur").value));
+    shared.shadowX = map.shadowX(Number($("s_shadowX").value));
+    shared.shadowY = map.shadowY(Number($("s_shadowY").value));
+
     for(const k of keys){
-      per[k]={ text:k, alpha:1, offX:0, offY:0,
-        iconId:"none", iconColor:"#ffffff", iconScale:1, iconX:0, iconY:0,
-        iconBehind:true
-      };
+      per[k].text = k;
+      per[k].icon = "none";
+      per[k].iconColor = "#ffffff";
+      per[k].iconScale01 = 0.50;
+      per[k].iconBehind = true;
     }
-    active="300";
-    buildTabs(); syncSharedUI(); syncUIFromActive();
-    $("statusPill").textContent="reset";
+
+    active = "300";
+    buildTabs();
+    syncUIFromActive();
+    updateSliderLabels();
+    $("statusPill").textContent = "reset";
     toast("Reset feito");
     await renderPreview();
   });
 
-  // init
+  // ================= init =================
   (async function init(){
+    // initial apply from slider defaults
+    shared.fontSize = map.fontSize(Number($("s_fontSize").value));
+    shared.tracking = map.tracking(Number($("s_tracking").value));
+    shared.skewDeg = map.skewDeg(Number($("s_skew").value));
+    shared.strokeW = map.strokeW(Number($("s_strokeW").value));
+    shared.glowBlur = map.glowBlur(Number($("s_glowBlur").value));
+    shared.shadowBlur = map.shadowBlur(Number($("s_shadowBlur").value));
+    shared.shadowX = map.shadowX(Number($("s_shadowX").value));
+    shared.shadowY = map.shadowY(Number($("s_shadowY").value));
+
     buildTabs();
-    buildIconPicker();
-    syncSharedUI();
     syncUIFromActive();
+    updateSliderLabels();
     await document.fonts.ready;
     await renderPreview();
     toast("Pronto ✅");
