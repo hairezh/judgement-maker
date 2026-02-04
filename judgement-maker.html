@@ -1,0 +1,1145 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>osu!mania Judgement PNG Maker</title>
+  <style>
+    :root{
+      --bg:#0b0c0f; --fg:#e8e8e8; --muted:#9aa0a6;
+      --panel:rgba(255,255,255,.04); --border:rgba(255,255,255,.10);
+      --accent:#7c5cff; --r:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:radial-gradient(1200px 700px at 70% 10%, rgba(124,92,255,.20), transparent 60%),
+                 radial-gradient(900px 600px at 10% 10%, rgba(0,212,255,.12), transparent 60%),
+                 var(--bg);
+      color:var(--fg);
+    }
+    header{
+      padding:18px 18px 10px;
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      border-bottom:1px solid var(--border);
+      background:rgba(0,0,0,.20);
+      backdrop-filter: blur(8px);
+      position:sticky; top:0; z-index:5;
+    }
+    header h1{margin:0; font-size:16px; letter-spacing:.2px}
+    header .hint{color:var(--muted); font-size:12px}
+    .wrap{
+      padding:18px;
+      display:grid;
+      grid-template-columns: 390px 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .wrap{grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border:1px solid var(--border);
+      background:var(--panel);
+      border-radius:var(--r);
+      overflow:hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .card .title{
+      padding:12px 12px 10px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .card .title strong{font-size:13px}
+    .card .content{padding:12px}
+
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .row3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
+    .field{display:flex; flex-direction:column; gap:6px; margin-bottom:10px}
+    label{font-size:12px; color:var(--muted)}
+    input[type="text"], input[type="number"], select, textarea{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.25);
+      color:var(--fg);
+      outline:none;
+    }
+    textarea{min-height:92px; resize:vertical; font-family:var(--mono); font-size:12px}
+    input[type="color"]{
+      width:100%;
+      height:40px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:transparent;
+      padding:4px;
+    }
+    input[type="file"]{
+      width:100%;
+      padding:10px;
+      border-radius:12px;
+      border:1px dashed var(--border);
+      background:rgba(0,0,0,.18);
+      color:var(--muted);
+    }
+
+    .btns{display:flex; flex-wrap:wrap; gap:10px}
+    button{
+      border:1px solid var(--border);
+      background:rgba(124,92,255,.18);
+      color:var(--fg);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:12px;
+    }
+    button:hover{background:rgba(124,92,255,.28)}
+    button.secondary{background:rgba(255,255,255,.06)}
+    button.secondary:hover{background:rgba(255,255,255,.10)}
+    button.danger{background:rgba(255,80,80,.15)}
+    button.danger:hover{background:rgba(255,80,80,.22)}
+    .small{font-size:12px; color:var(--muted); line-height:1.4}
+    .pill{
+      font-family:var(--mono);
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.22);
+      color:var(--muted);
+    }
+
+    .stage{
+      display:flex; flex-direction:column; gap:12px;
+      padding:12px;
+    }
+    .canvasWrap{
+      border-radius:18px;
+      border:1px solid var(--border);
+      background:
+        linear-gradient(45deg, rgba(255,255,255,.06) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.06) 75%, rgba(255,255,255,.06)),
+        linear-gradient(45deg, rgba(255,255,255,.06) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.06) 75%, rgba(255,255,255,.06));
+      background-position: 0 0, 14px 14px;
+      background-size: 28px 28px;
+      overflow:hidden;
+      position:relative;
+    }
+    canvas{display:block; width:100%; height:auto; image-rendering: auto;}
+    .stageTop{
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .stageTop .left{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    .stageTop .right{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+    .kbd{
+      font-family:var(--mono);
+      font-size:11px;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:6px 8px;
+      border-radius:10px;
+      background:rgba(0,0,0,.20);
+    }
+    .divider{height:1px; background:var(--border); margin:10px 0}
+    .toast{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.55);
+      color:var(--fg);
+      font-size:12px;
+      opacity:0;
+      transform:translateY(8px);
+      transition:.2s;
+      pointer-events:none;
+    }
+    .toast.show{opacity:1; transform:translateY(0)}
+    a{color:inherit}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>osu!mania Judgement PNG Maker</h1>
+    <span class="hint">Renderiza no canvas, centraliza “de verdade”, exporta PNG transparente.</span>
+  </header>
+
+  <div class="wrap">
+    <!-- LEFT: CONTROLS -->
+    <section class="card">
+      <div class="title">
+        <strong>Config</strong>
+        <span class="pill" id="statusPill">pronto</span>
+      </div>
+      <div class="content">
+        <div class="field">
+          <label>Texto do judgement</label>
+          <input id="txt" type="text" value="SICK!" />
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Fonte (nome)</label>
+            <input id="fontName" type="text" value="Arial Black" />
+          </div>
+          <div class="field">
+            <label>Upload de fonte (.ttf/.otf)</label>
+            <input id="fontFile" type="file" accept=".ttf,.otf" />
+          </div>
+        </div>
+
+        <div class="row3">
+          <div class="field">
+            <label>Tamanho (px)</label>
+            <input id="fontSize" type="number" value="92" min="1" step="1" />
+          </div>
+          <div class="field">
+            <label>Tracking (letras)</label>
+            <input id="tracking" type="number" value="0" step="0.5" />
+          </div>
+          <div class="field">
+            <label>Inclinação (°)</label>
+            <input id="skewDeg" type="number" value="0" step="0.5" />
+          </div>
+        </div>
+
+        <div class="row3">
+          <div class="field">
+            <label>Cor do texto</label>
+            <input id="fill" type="color" value="#ffffff" />
+          </div>
+          <div class="field">
+            <label>Outline (px)</label>
+            <input id="strokeW" type="number" value="10" min="0" step="1" />
+          </div>
+          <div class="field">
+            <label>Cor do outline</label>
+            <input id="stroke" type="color" value="#000000" />
+          </div>
+        </div>
+
+        <div class="row3">
+          <div class="field">
+            <label>Sombra (blur)</label>
+            <input id="shadowBlur" type="number" value="0" min="0" step="1" />
+          </div>
+          <div class="field">
+            <label>Sombra X</label>
+            <input id="shadowX" type="number" value="0" step="1" />
+          </div>
+          <div class="field">
+            <label>Sombra Y</label>
+            <input id="shadowY" type="number" value="0" step="1" />
+          </div>
+        </div>
+
+        <div class="row3">
+          <div class="field">
+            <label>Cor da sombra</label>
+            <input id="shadowColor" type="color" value="#000000" />
+          </div>
+          <div class="field">
+            <label>Glow (blur)</label>
+            <input id="glowBlur" type="number" value="18" min="0" step="1" />
+          </div>
+          <div class="field">
+            <label>Cor do glow</label>
+            <input id="glowColor" type="color" value="#7c5cff" />
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="field">
+            <label>Tamanho do PNG</label>
+            <select id="sizePreset">
+              <option value="512x256" selected>512 × 256 (comum)</option>
+              <option value="256x256">256 × 256</option>
+              <option value="512x512">512 × 512</option>
+              <option value="1024x512">1024 × 512</option>
+              <option value="1024x1024">1024 × 1024</option>
+              <option value="custom">Custom…</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Resolução interna (scale)</label>
+            <select id="scale">
+              <option value="1">1x (leve)</option>
+              <option value="2" selected>2x (mais nítido)</option>
+              <option value="3">3x (pesado)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Largura custom</label>
+            <input id="cw" type="number" value="512" min="1" step="1" />
+          </div>
+          <div class="field">
+            <label>Altura custom</label>
+            <input id="ch" type="number" value="256" min="1" step="1" />
+          </div>
+        </div>
+
+        <div class="row3">
+          <div class="field">
+            <label>Offset X (px)</label>
+            <input id="offX" type="number" value="0" step="1" />
+          </div>
+          <div class="field">
+            <label>Offset Y (px)</label>
+            <input id="offY" type="number" value="0" step="1" />
+          </div>
+          <div class="field">
+            <label>Alpha</label>
+            <input id="alpha" type="number" value="1" min="0" max="1" step="0.05" />
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <label>Ícone / símbolo (PNG opcional)</label>
+          <input id="iconFile" type="file" accept="image/png,image/webp,image/jpeg" />
+        </div>
+
+        <div class="row3">
+          <div class="field">
+            <label>Ícone escala</label>
+            <input id="iconScale" type="number" value="1" min="0" step="0.05" />
+          </div>
+          <div class="field">
+            <label>Ícone offset X</label>
+            <input id="iconX" type="number" value="0" step="1" />
+          </div>
+          <div class="field">
+            <label>Ícone offset Y</label>
+            <input id="iconY" type="number" value="0" step="1" />
+          </div>
+        </div>
+
+        <div class="row3">
+          <div class="field">
+            <label>Ícone atrás do texto?</label>
+            <select id="iconBehind">
+              <option value="yes" selected>Sim</option>
+              <option value="no">Não</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Suavizar ícone</label>
+            <select id="iconSmooth">
+              <option value="yes" selected>Sim</option>
+              <option value="no">Não (pixelado)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Remover ícone</label>
+            <button class="danger" id="clearIcon" type="button">Limpar</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="btns">
+          <button id="download" type="button">Baixar PNG</button>
+          <button id="copyCfg" class="secondary" type="button">Copiar preset (JSON)</button>
+          <button id="pasteCfg" class="secondary" type="button">Colar preset (JSON)</button>
+          <button id="reset" class="secondary" type="button">Reset</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <label>Export em lote (um por linha) — usa o MESMO estilo</label>
+          <textarea id="batch" placeholder="SICK!
+GOOD
+BAD
+MISS"></textarea>
+        </div>
+
+        <div class="btns">
+          <button id="batchExport" type="button">Baixar lote (ZIP fake: vários PNGs)</button>
+          <button id="batchHelp" class="secondary" type="button">Como funciona?</button>
+        </div>
+
+        <p class="small">
+          <b>Nota:</b> “ZIP fake” = o navegador vai baixar <i>vários PNGs</i> (um por item).
+          Se você quiser ZIP real depois, dá pra adicionar uma lib JS (JSZip).
+        </p>
+      </div>
+    </section>
+
+    <!-- RIGHT: PREVIEW -->
+    <section class="card">
+      <div class="title">
+        <strong>Preview</strong>
+        <div class="right">
+          <span class="kbd">Arraste o mouse = move offset</span>
+          <span class="kbd">Shift + arraste = move ícone</span>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stageTop">
+          <div class="left">
+            <span class="pill" id="dimPill">512×256</span>
+            <span class="pill" id="fontPill">fonte: Arial Black</span>
+          </div>
+          <div class="right">
+            <button id="toggleGuides" class="secondary" type="button">Guias: ON</button>
+            <button id="toggleBG" class="secondary" type="button">Fundo preview</button>
+          </div>
+        </div>
+
+        <div class="canvasWrap" id="canvasWrap">
+          <canvas id="c"></canvas>
+        </div>
+
+        <p class="small">
+          O PNG exportado sai com <b>fundo transparente</b>. O xadrez é só pro preview.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ========= helpers =========
+    const $ = (id) => document.getElementById(id);
+    const toast = (msg) => {
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toast._tm);
+      toast._tm = setTimeout(()=>t.classList.remove("show"), 1600);
+    };
+
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+    // ========= state =========
+    const state = {
+      text: "SICK!",
+      fontName: "Arial Black",
+      fontSize: 92,
+      tracking: 0,
+      skewDeg: 0,
+
+      fill: "#ffffff",
+      strokeW: 10,
+      stroke: "#000000",
+
+      shadowBlur: 0,
+      shadowX: 0,
+      shadowY: 0,
+      shadowColor: "#000000",
+
+      glowBlur: 18,
+      glowColor: "#7c5cff",
+
+      alpha: 1,
+      offX: 0,
+      offY: 0,
+
+      w: 512,
+      h: 256,
+      scale: 2,
+
+      guides: true,
+      previewBG: false,
+
+      // icon
+      iconImg: null,
+      iconScale: 1,
+      iconX: 0,
+      iconY: 0,
+      iconBehind: true,
+      iconSmooth: true,
+    };
+
+    const canvas = $("c");
+    const ctx = canvas.getContext("2d");
+
+    function setCanvasSize(){
+      const W = Math.max(1, Math.floor(state.w * state.scale));
+      const H = Math.max(1, Math.floor(state.h * state.scale));
+      canvas.width = W;
+      canvas.height = H;
+      $("dimPill").textContent = `${state.w}×${state.h}`;
+    }
+
+    // Centralização REAL usando bounding boxes quando disponível
+    function measureTextBox(text, font){
+      ctx.save();
+      ctx.font = font;
+      const m = ctx.measureText(text);
+
+      // Fallbacks caso o browser não suporte actualBoundingBox*
+      const ascent = (m.actualBoundingBoxAscent ?? m.fontBoundingBoxAscent ?? (state.fontSize * 0.8));
+      const descent = (m.actualBoundingBoxDescent ?? m.fontBoundingBoxDescent ?? (state.fontSize * 0.2));
+      const left = (m.actualBoundingBoxLeft ?? 0);
+      const right = (m.actualBoundingBoxRight ?? m.width);
+
+      ctx.restore();
+      return {
+        width: right + left,
+        height: ascent + descent,
+        ascent,
+        descent,
+        left,
+        right,
+        raw: m
+      };
+    }
+
+    function drawGuides(){
+      if(!state.guides) return;
+      const W = canvas.width, H = canvas.height;
+      ctx.save();
+      ctx.globalAlpha = 0.55;
+      ctx.lineWidth = Math.max(1, state.scale);
+      // crosshair center
+      ctx.beginPath();
+      ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H);
+      ctx.moveTo(0, H/2); ctx.lineTo(W, H/2);
+      ctx.strokeStyle = "rgba(255,255,255,.25)";
+      ctx.stroke();
+
+      // safe box (tipo “área segura”)
+      const pad = 14 * state.scale;
+      ctx.strokeStyle = "rgba(124,92,255,.35)";
+      ctx.strokeRect(pad, pad, W - pad*2, H - pad*2);
+
+      ctx.restore();
+    }
+
+    function clear(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      // preview background opcional
+      if(state.previewBG){
+        ctx.save();
+        ctx.fillStyle = "rgba(0,0,0,.35)";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.restore();
+      }
+    }
+
+    function drawIcon(centerX, centerY){
+      if(!state.iconImg) return;
+
+      const img = state.iconImg;
+      const scale = state.iconScale * state.scale;
+
+      const iw = img.naturalWidth * scale;
+      const ih = img.naturalHeight * scale;
+
+      // ícone centralizado no mesmo pivot do texto, com offset próprio
+      const x = centerX - iw/2 + (state.iconX * state.scale);
+      const y = centerY - ih/2 + (state.iconY * state.scale);
+
+      ctx.save();
+      ctx.imageSmoothingEnabled = !!state.iconSmooth;
+      ctx.globalAlpha = clamp(state.alpha, 0, 1);
+      ctx.drawImage(img, x, y, iw, ih);
+      ctx.restore();
+    }
+
+    function drawText(centerX, centerY){
+      const size = state.fontSize * state.scale;
+      const font = `${size}px "${state.fontName}"`;
+      const text = state.text ?? "";
+      const tracking = Number(state.tracking || 0) * state.scale;
+
+      // caixa do texto (pra centralizar de verdade)
+      const box = measureTextBox(text, font);
+
+      // A ideia: desenhar de modo que o "miolo" da bounding box fique no centro
+      // Ajuste base: (ascent - descent)/2 desloca o baseline pro meio real
+      const baselineToMiddle = (box.ascent - box.descent) / 2;
+
+      const x0 = centerX;
+      const y0 = centerY + baselineToMiddle;
+
+      ctx.save();
+      ctx.globalAlpha = clamp(state.alpha, 0, 1);
+      ctx.font = font;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+
+      // Skew (inclinação) em X
+      const skew = Math.tan((Number(state.skewDeg) || 0) * Math.PI/180);
+      ctx.transform(1, 0, skew, 1, 0, 0);
+
+      // Efeitos: glow (via shadow) + outline + fill
+      // Glow
+      if(Number(state.glowBlur) > 0){
+        ctx.save();
+        ctx.shadowBlur = Number(state.glowBlur) * state.scale;
+        ctx.shadowColor = state.glowColor;
+        ctx.fillStyle = state.fill;
+        drawTextWithTracking(text, x0, y0, tracking, /*strokeOnly*/false, /*fillOnly*/true);
+        ctx.restore();
+      }
+
+      // Shadow (real)
+      if(Number(state.shadowBlur) > 0 || Number(state.shadowX) !== 0 || Number(state.shadowY) !== 0){
+        ctx.save();
+        ctx.shadowBlur = Number(state.shadowBlur) * state.scale;
+        ctx.shadowColor = state.shadowColor;
+        ctx.shadowOffsetX = Number(state.shadowX) * state.scale;
+        ctx.shadowOffsetY = Number(state.shadowY) * state.scale;
+
+        // desenha preenchimento com sombra
+        ctx.fillStyle = state.fill;
+        drawTextWithTracking(text, x0, y0, tracking, false, true);
+        ctx.restore();
+      }
+
+      // Outline
+      if(Number(state.strokeW) > 0){
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.lineWidth = Number(state.strokeW) * state.scale;
+        ctx.strokeStyle = state.stroke;
+        drawTextWithTracking(text, x0, y0, tracking, true, false);
+      }
+
+      // Fill
+      ctx.fillStyle = state.fill;
+      drawTextWithTracking(text, x0, y0, tracking, false, true);
+
+      ctx.restore();
+    }
+
+    // Desenha texto com tracking manual (letter-spacing)
+    function drawTextWithTracking(text, x, y, tracking, strokeOnly, fillOnly){
+      if(!text){ return; }
+
+      if(!tracking){
+        if(strokeOnly) ctx.strokeText(text, x, y);
+        if(fillOnly) ctx.fillText(text, x, y);
+        return;
+      }
+
+      // Centraliza manualmente com tracking:
+      // mede cada char e soma larguras + tracking
+      const chars = [...text];
+      let widths = chars.map(ch => ctx.measureText(ch).width);
+      let total = widths.reduce((a,b)=>a+b,0) + tracking*(chars.length-1);
+      let startX = x - total/2;
+
+      for(let i=0;i<chars.length;i++){
+        const ch = chars[i];
+        const cx = startX + widths[i]/2;
+        if(strokeOnly) ctx.strokeText(ch, cx, y);
+        if(fillOnly) ctx.fillText(ch, cx, y);
+        startX += widths[i] + tracking;
+      }
+    }
+
+    function render(){
+      setCanvasSize();
+      clear();
+
+      const centerX = canvas.width/2 + (Number(state.offX)||0) * state.scale;
+      const centerY = canvas.height/2 + (Number(state.offY)||0) * state.scale;
+
+      if(state.iconBehind) drawIcon(centerX, centerY);
+      drawText(centerX, centerY);
+      if(!state.iconBehind) drawIcon(centerX, centerY);
+
+      drawGuides();
+
+      $("fontPill").textContent = `fonte: ${state.fontName}`;
+    }
+
+    function getPNGBlob(){
+      return new Promise((resolve) => {
+        canvas.toBlob((blob)=>resolve(blob), "image/png");
+      });
+    }
+
+    function downloadBlob(blob, filename){
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>{
+        URL.revokeObjectURL(a.href);
+        a.remove();
+      }, 200);
+    }
+
+    function sanitizeName(s){
+      return (s || "judgement")
+        .trim()
+        .replace(/[\\/:*?"<>|]+/g, "")
+        .replace(/\s+/g, "_")
+        .slice(0, 80) || "judgement";
+    }
+
+    // ========= UI -> state bindings =========
+    const bind = (id, key, parser=(v)=>v) => {
+      const el = $(id);
+      const read = () => {
+        state[key] = parser(el.value);
+        render();
+      };
+      el.addEventListener("input", read);
+      el.addEventListener("change", read);
+      return read;
+    };
+
+    bind("txt", "text", v=>v);
+    bind("fontName", "fontName", v=>v);
+
+    bind("fontSize", "fontSize", v=>Number(v||0));
+    bind("tracking", "tracking", v=>Number(v||0));
+    bind("skewDeg", "skewDeg", v=>Number(v||0));
+
+    bind("fill", "fill", v=>v);
+    bind("strokeW", "strokeW", v=>Number(v||0));
+    bind("stroke", "stroke", v=>v);
+
+    bind("shadowBlur", "shadowBlur", v=>Number(v||0));
+    bind("shadowX", "shadowX", v=>Number(v||0));
+    bind("shadowY", "shadowY", v=>Number(v||0));
+    bind("shadowColor", "shadowColor", v=>v);
+
+    bind("glowBlur", "glowBlur", v=>Number(v||0));
+    bind("glowColor", "glowColor", v=>v);
+
+    bind("offX", "offX", v=>Number(v||0));
+    bind("offY", "offY", v=>Number(v||0));
+    bind("alpha", "alpha", v=>Number(v||1));
+
+    bind("iconScale", "iconScale", v=>Number(v||1));
+    bind("iconX", "iconX", v=>Number(v||0));
+    bind("iconY", "iconY", v=>Number(v||0));
+
+    $("iconBehind").addEventListener("change", (e)=>{
+      state.iconBehind = e.target.value === "yes";
+      render();
+    });
+    $("iconSmooth").addEventListener("change", (e)=>{
+      state.iconSmooth = e.target.value === "yes";
+      render();
+    });
+
+    $("scale").addEventListener("change", (e)=>{
+      state.scale = Number(e.target.value || 1);
+      render();
+    });
+
+    function applySizePreset(){
+      const v = $("sizePreset").value;
+      if(v !== "custom"){
+        const [w,h] = v.split("x").map(n=>Number(n));
+        state.w = w; state.h = h;
+        $("cw").value = w;
+        $("ch").value = h;
+      }else{
+        state.w = Number($("cw").value || 512);
+        state.h = Number($("ch").value || 256);
+      }
+      render();
+    }
+    $("sizePreset").addEventListener("change", applySizePreset);
+    $("cw").addEventListener("change", ()=>{
+      $("sizePreset").value = "custom";
+      state.w = Number($("cw").value||512);
+      render();
+    });
+    $("ch").addEventListener("change", ()=>{
+      $("sizePreset").value = "custom";
+      state.h = Number($("ch").value||256);
+      render();
+    });
+
+    // ========= Font upload =========
+    $("fontFile").addEventListener("change", async (e)=>{
+      const file = e.target.files?.[0];
+      if(!file) return;
+      try{
+        const buf = await file.arrayBuffer();
+        const fname = file.name.replace(/\.(ttf|otf)$/i,"");
+        const face = new FontFace(fname, buf);
+        $("statusPill").textContent = "carregando fonte…";
+        await face.load();
+        document.fonts.add(face);
+        state.fontName = fname;
+        $("fontName").value = fname;
+        $("statusPill").textContent = "fonte ok";
+        toast("Fonte carregada ✅");
+        // aguarda fontes disponíveis
+        await document.fonts.ready;
+        render();
+      }catch(err){
+        console.error(err);
+        $("statusPill").textContent = "erro fonte";
+        toast("Falha ao carregar fonte 😵");
+      }
+    });
+
+    // ========= Icon upload =========
+    $("iconFile").addEventListener("change", async (e)=>{
+      const file = e.target.files?.[0];
+      if(!file) return;
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = ()=>{
+        state.iconImg = img;
+        URL.revokeObjectURL(url);
+        toast("Ícone carregado ✅");
+        render();
+      };
+      img.onerror = ()=>{
+        URL.revokeObjectURL(url);
+        toast("Falha ao carregar ícone 😵");
+      };
+      img.src = url;
+    });
+
+    $("clearIcon").addEventListener("click", ()=>{
+      state.iconImg = null;
+      $("iconFile").value = "";
+      toast("Ícone removido");
+      render();
+    });
+
+    // ========= Buttons =========
+    $("download").addEventListener("click", async ()=>{
+      render();
+      const blob = await getPNGBlob();
+      const name = sanitizeName(state.text) + `_${state.w}x${state.h}.png`;
+      downloadBlob(blob, name);
+      toast("Baixando PNG…");
+    });
+
+    $("reset").addEventListener("click", ()=>{
+      // reset básico
+      Object.assign(state, {
+        text: "SICK!",
+        fontName: "Arial Black",
+        fontSize: 92,
+        tracking: 0,
+        skewDeg: 0,
+        fill: "#ffffff",
+        strokeW: 10,
+        stroke: "#000000",
+        shadowBlur: 0,
+        shadowX: 0,
+        shadowY: 0,
+        shadowColor: "#000000",
+        glowBlur: 18,
+        glowColor: "#7c5cff",
+        alpha: 1,
+        offX: 0,
+        offY: 0,
+        w: 512, h: 256,
+        scale: 2,
+        iconImg: null,
+        iconScale: 1,
+        iconX: 0,
+        iconY: 0,
+        iconBehind: true,
+        iconSmooth: true
+      });
+
+      // sync UI
+      $("txt").value = state.text;
+      $("fontName").value = state.fontName;
+      $("fontSize").value = state.fontSize;
+      $("tracking").value = state.tracking;
+      $("skewDeg").value = state.skewDeg;
+      $("fill").value = state.fill;
+      $("strokeW").value = state.strokeW;
+      $("stroke").value = state.stroke;
+      $("shadowBlur").value = state.shadowBlur;
+      $("shadowX").value = state.shadowX;
+      $("shadowY").value = state.shadowY;
+      $("shadowColor").value = state.shadowColor;
+      $("glowBlur").value = state.glowBlur;
+      $("glowColor").value = state.glowColor;
+      $("alpha").value = state.alpha;
+      $("offX").value = state.offX;
+      $("offY").value = state.offY;
+
+      $("sizePreset").value = "512x256";
+      $("cw").value = 512;
+      $("ch").value = 256;
+      $("scale").value = "2";
+
+      $("iconScale").value = state.iconScale;
+      $("iconX").value = state.iconX;
+      $("iconY").value = state.iconY;
+      $("iconBehind").value = "yes";
+      $("iconSmooth").value = "yes";
+      $("iconFile").value = "";
+
+      $("statusPill").textContent = "reset";
+      toast("Reset feito");
+      render();
+    });
+
+    $("copyCfg").addEventListener("click", async ()=>{
+      const cfg = exportConfig();
+      try{
+        await navigator.clipboard.writeText(JSON.stringify(cfg, null, 2));
+        toast("Preset copiado (JSON) ✅");
+      }catch{
+        toast("Não consegui copiar 😵 (permissão)");
+      }
+    });
+
+    $("pasteCfg").addEventListener("click", async ()=>{
+      try{
+        const txt = await navigator.clipboard.readText();
+        const cfg = JSON.parse(txt);
+        importConfig(cfg);
+        toast("Preset aplicado ✅");
+      }catch{
+        toast("Falha ao colar JSON 😵");
+      }
+    });
+
+    $("batchHelp").addEventListener("click", ()=>{
+      toast("Cada linha vira um PNG separado (mesmo estilo).");
+    });
+
+    $("batchExport").addEventListener("click", async ()=>{
+      const lines = ($("batch").value || "")
+        .split(/\r?\n/)
+        .map(s=>s.trim())
+        .filter(Boolean);
+
+      if(!lines.length){
+        toast("Nada no lote 😅");
+        return;
+      }
+
+      const original = state.text;
+      for(const line of lines){
+        state.text = line;
+        render();
+        const blob = await getPNGBlob();
+        const name = sanitizeName(line) + `_${state.w}x${state.h}.png`;
+        downloadBlob(blob, name);
+
+        // dá um respiro pro navegador criar downloads múltiplos
+        await new Promise(r=>setTimeout(r, 120));
+      }
+      state.text = original;
+      $("txt").value = original;
+      render();
+      toast(`Lote: ${lines.length} PNGs`);
+    });
+
+    // ========= Toggle buttons =========
+    $("toggleGuides").addEventListener("click", ()=>{
+      state.guides = !state.guides;
+      $("toggleGuides").textContent = `Guias: ${state.guides ? "ON" : "OFF"}`;
+      render();
+    });
+
+    $("toggleBG").addEventListener("click", ()=>{
+      state.previewBG = !state.previewBG;
+      render();
+      toast(`Fundo preview: ${state.previewBG ? "ON" : "OFF"}`);
+    });
+
+    // ========= Drag to adjust offsets =========
+    let dragging = false;
+    let dragMode = "text"; // text/icon
+    let lastX = 0, lastY = 0;
+
+    $("canvasWrap").addEventListener("mousedown", (e)=>{
+      dragging = true;
+      dragMode = e.shiftKey ? "icon" : "text";
+      lastX = e.clientX;
+      lastY = e.clientY;
+      e.preventDefault();
+    });
+
+    window.addEventListener("mouseup", ()=>{
+      dragging = false;
+    });
+
+    window.addEventListener("mousemove", (e)=>{
+      if(!dragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+
+      // dx/dy estão em pixels de tela; converte aproximado pro espaço do canvas lógico
+      // Como o canvas é responsivo, usa fator baseado na largura renderizada.
+      const rect = canvas.getBoundingClientRect();
+      const sx = state.w / rect.width;
+      const sy = state.h / rect.height;
+
+      if(dragMode === "icon"){
+        state.iconX += dx * sx;
+        state.iconY += dy * sy;
+        $("iconX").value = Math.round(state.iconX);
+        $("iconY").value = Math.round(state.iconY);
+      }else{
+        state.offX += dx * sx;
+        state.offY += dy * sy;
+        $("offX").value = Math.round(state.offX);
+        $("offY").value = Math.round(state.offY);
+      }
+      render();
+    });
+
+    // ========= Preset import/export =========
+    function exportConfig(){
+      return {
+        text: state.text,
+        fontName: state.fontName,
+        fontSize: state.fontSize,
+        tracking: state.tracking,
+        skewDeg: state.skewDeg,
+        fill: state.fill,
+        strokeW: state.strokeW,
+        stroke: state.stroke,
+        shadowBlur: state.shadowBlur,
+        shadowX: state.shadowX,
+        shadowY: state.shadowY,
+        shadowColor: state.shadowColor,
+        glowBlur: state.glowBlur,
+        glowColor: state.glowColor,
+        alpha: state.alpha,
+        offX: state.offX,
+        offY: state.offY,
+        w: state.w,
+        h: state.h,
+        scale: state.scale,
+        iconScale: state.iconScale,
+        iconX: state.iconX,
+        iconY: state.iconY,
+        iconBehind: state.iconBehind,
+        iconSmooth: state.iconSmooth
+        // ícone e fonte upload não vão no preset (depende do arquivo)
+      };
+    }
+
+    function importConfig(cfg){
+      const safe = (k, d)=> (cfg && (k in cfg)) ? cfg[k] : d;
+
+      state.text = String(safe("text", state.text));
+      state.fontName = String(safe("fontName", state.fontName));
+      state.fontSize = Number(safe("fontSize", state.fontSize));
+      state.tracking = Number(safe("tracking", state.tracking));
+      state.skewDeg = Number(safe("skewDeg", state.skewDeg));
+      state.fill = String(safe("fill", state.fill));
+      state.strokeW = Number(safe("strokeW", state.strokeW));
+      state.stroke = String(safe("stroke", state.stroke));
+      state.shadowBlur = Number(safe("shadowBlur", state.shadowBlur));
+      state.shadowX = Number(safe("shadowX", state.shadowX));
+      state.shadowY = Number(safe("shadowY", state.shadowY));
+      state.shadowColor = String(safe("shadowColor", state.shadowColor));
+      state.glowBlur = Number(safe("glowBlur", state.glowBlur));
+      state.glowColor = String(safe("glowColor", state.glowColor));
+      state.alpha = Number(safe("alpha", state.alpha));
+      state.offX = Number(safe("offX", state.offX));
+      state.offY = Number(safe("offY", state.offY));
+      state.w = Number(safe("w", state.w));
+      state.h = Number(safe("h", state.h));
+      state.scale = Number(safe("scale", state.scale));
+      state.iconScale = Number(safe("iconScale", state.iconScale));
+      state.iconX = Number(safe("iconX", state.iconX));
+      state.iconY = Number(safe("iconY", state.iconY));
+      state.iconBehind = !!safe("iconBehind", state.iconBehind);
+      state.iconSmooth = !!safe("iconSmooth", state.iconSmooth);
+
+      // sync UI
+      $("txt").value = state.text;
+      $("fontName").value = state.fontName;
+      $("fontSize").value = state.fontSize;
+      $("tracking").value = state.tracking;
+      $("skewDeg").value = state.skewDeg;
+      $("fill").value = state.fill;
+      $("strokeW").value = state.strokeW;
+      $("stroke").value = state.stroke;
+      $("shadowBlur").value = state.shadowBlur;
+      $("shadowX").value = state.shadowX;
+      $("shadowY").value = state.shadowY;
+      $("shadowColor").value = state.shadowColor;
+      $("glowBlur").value = state.glowBlur;
+      $("glowColor").value = state.glowColor;
+      $("alpha").value = state.alpha;
+      $("offX").value = state.offX;
+      $("offY").value = state.offY;
+
+      $("cw").value = state.w;
+      $("ch").value = state.h;
+      $("sizePreset").value = "custom";
+      // tenta casar com preset conhecido
+      const known = ["512x256","256x256","512x512","1024x512","1024x1024"];
+      const key = `${state.w}x${state.h}`;
+      if(known.includes(key)) $("sizePreset").value = key;
+
+      $("scale").value = String(state.scale);
+
+      $("iconScale").value = state.iconScale;
+      $("iconX").value = state.iconX;
+      $("iconY").value = state.iconY;
+      $("iconBehind").value = state.iconBehind ? "yes" : "no";
+      $("iconSmooth").value = state.iconSmooth ? "yes" : "no";
+
+      render();
+    }
+
+    // ========= init =========
+    (async function init(){
+      // inicializa UI coerente com state
+      $("txt").value = state.text;
+      $("fontName").value = state.fontName;
+      $("fontSize").value = state.fontSize;
+      $("tracking").value = state.tracking;
+      $("skewDeg").value = state.skewDeg;
+      $("fill").value = state.fill;
+      $("strokeW").value = state.strokeW;
+      $("stroke").value = state.stroke;
+      $("shadowBlur").value = state.shadowBlur;
+      $("shadowX").value = state.shadowX;
+      $("shadowY").value = state.shadowY;
+      $("shadowColor").value = state.shadowColor;
+      $("glowBlur").value = state.glowBlur;
+      $("glowColor").value = state.glowColor;
+      $("alpha").value = state.alpha;
+      $("offX").value = state.offX;
+      $("offY").value = state.offY;
+
+      $("cw").value = state.w;
+      $("ch").value = state.h;
+      $("scale").value = String(state.scale);
+      $("sizePreset").value = "512x256";
+
+      $("iconScale").value = state.iconScale;
+      $("iconX").value = state.iconX;
+      $("iconY").value = state.iconY;
+      $("iconBehind").value = "yes";
+      $("iconSmooth").value = "yes";
+
+      // aguarda fontes prontas (ajuda com a 1ª render)
+      await document.fonts.ready;
+      render();
+      toast("Pronto ✅");
+    })();
+  </script>
+</body>
+</html>
