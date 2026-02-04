@@ -35,7 +35,7 @@
     .wrap{
       padding:18px;
       display:grid;
-      grid-template-columns: 460px 1fr;
+      grid-template-columns: 480px 1fr;
       gap:14px;
       align-items:start;
     }
@@ -68,7 +68,7 @@
       border:1px solid var(--border);
       background:rgba(0,0,0,.18);
       padding:8px 10px;
-      border-radius: var(--r2); /* menos redondo */
+      border-radius: var(--r2);
       font-family:var(--mono);
       font-size:12px;
       cursor:pointer;
@@ -90,14 +90,6 @@
       background:rgba(0,0,0,.25);
       color:var(--fg);
       outline:none;
-    }
-    input[type="file"]{
-      width:100%;
-      padding:10px;
-      border-radius:12px;
-      border:1px dashed var(--border);
-      background:rgba(0,0,0,.18);
-      color:var(--muted);
     }
     input[type="color"]{
       width:100%;
@@ -125,8 +117,6 @@
     button:hover{background:rgba(124,92,255,.28)}
     button.secondary{background:rgba(255,255,255,.06)}
     button.secondary:hover{background:rgba(255,255,255,.10)}
-    button.danger{background:rgba(255,80,80,.15)}
-    button.danger:hover{background:rgba(255,80,80,.22)}
 
     .pill{
       font-family:var(--mono);
@@ -143,7 +133,6 @@
     .stage{display:flex; flex-direction:column; gap:12px; padding:12px;}
     .stageTop{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
     .stageTop .left{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
-    .stageTop .right{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
 
     .canvasWrap{
       border-radius:18px;
@@ -168,7 +157,7 @@
       image-rendering:auto;
     }
 
-    /* sliders */
+    /* sliders com valor editável */
     .sliderRow{
       display:flex; align-items:center; gap:10px;
       padding:10px;
@@ -177,13 +166,24 @@
       border-radius:12px;
     }
     .sliderRow input[type="range"]{width:100%}
-    .val{
+    .num{
+      width:90px;
       font-family:var(--mono);
       font-size:12px;
-      min-width:52px;
-      text-align:right;
+      padding:8px 8px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.25);
       color:var(--fg);
-      opacity:.9;
+      outline:none;
+      text-align:right;
+    }
+    .suffix{
+      font-family:var(--mono);
+      font-size:11px;
+      color:var(--muted);
+      min-width:28px;
+      text-align:left;
     }
 
     .toast{
@@ -205,7 +205,9 @@
 <body>
 <header>
   <h1>judgement-maker</h1>
-  <span class="hint">Export fixo: 288×56 e 576×112 (@2x). Master sempre @2x. Texto/ícone sempre centralizados.</span>
+  <span class="hint">
+    Export fixo: 288×56 e 576×112 (@2x). Master sempre @2x. Tudo centralizado. Configs por hit.
+  </span>
 </header>
 
 <div class="wrap">
@@ -219,28 +221,34 @@
 
     <div class="content">
       <div class="field">
-        <label>Texto do judgement (só deste selecionado)</label>
+        <label>Texto (só deste hit)</label>
         <input id="txt" type="text" value="300" />
       </div>
 
       <div class="row">
         <div class="field">
-          <label>Fonte (nome)</label>
-          <input id="fontName" type="text" value="Arial Black" />
+          <label>Fonte (local)</label>
+          <select id="fontSelect"></select>
         </div>
         <div class="field">
-          <label>Upload de fonte (.ttf/.otf)</label>
-          <input id="fontFile" type="file" accept=".ttf,.otf" />
+          <label>Fundo preview</label>
+          <button id="toggleBG" class="secondary" type="button">Alternar</button>
         </div>
       </div>
 
+      <p class="small">
+        Fontes locais: coloque arquivos em <b>./fonts/</b> e edite a lista <b>FONT_LIBRARY</b> no script.
+      </p>
+
       <div class="divider"></div>
 
+      <!-- sliders por hit -->
       <div class="field">
         <label>Tamanho da fonte</label>
         <div class="sliderRow">
           <input id="s_fontSize" type="range" min="0" max="100" value="55" />
-          <div class="val" id="v_fontSize"></div>
+          <input id="n_fontSize" class="num" type="number" step="1" />
+          <div class="suffix">px</div>
         </div>
       </div>
 
@@ -249,14 +257,16 @@
           <label>Tracking</label>
           <div class="sliderRow">
             <input id="s_tracking" type="range" min="0" max="100" value="50" />
-            <div class="val" id="v_tracking"></div>
+            <input id="n_tracking" class="num" type="number" step="0.1" />
+            <div class="suffix">px</div>
           </div>
         </div>
         <div class="field">
           <label>Inclinação</label>
           <div class="sliderRow">
             <input id="s_skew" type="range" min="0" max="100" value="50" />
-            <div class="val" id="v_skew"></div>
+            <input id="n_skew" class="num" type="number" step="0.1" />
+            <div class="suffix">°</div>
           </div>
         </div>
       </div>
@@ -270,7 +280,8 @@
           <label>Outline</label>
           <div class="sliderRow">
             <input id="s_strokeW" type="range" min="0" max="100" value="35" />
-            <div class="val" id="v_strokeW"></div>
+            <input id="n_strokeW" class="num" type="number" step="0.1" />
+            <div class="suffix">px</div>
           </div>
         </div>
         <div class="field">
@@ -284,21 +295,24 @@
           <label>Sombra blur</label>
           <div class="sliderRow">
             <input id="s_shadowBlur" type="range" min="0" max="100" value="0" />
-            <div class="val" id="v_shadowBlur"></div>
+            <input id="n_shadowBlur" class="num" type="number" step="0.1" />
+            <div class="suffix">px</div>
           </div>
         </div>
         <div class="field">
           <label>Sombra X</label>
           <div class="sliderRow">
             <input id="s_shadowX" type="range" min="0" max="100" value="50" />
-            <div class="val" id="v_shadowX"></div>
+            <input id="n_shadowX" class="num" type="number" step="0.1" />
+            <div class="suffix">px</div>
           </div>
         </div>
         <div class="field">
           <label>Sombra Y</label>
           <div class="sliderRow">
             <input id="s_shadowY" type="range" min="0" max="100" value="50" />
-            <div class="val" id="v_shadowY"></div>
+            <input id="n_shadowY" class="num" type="number" step="0.1" />
+            <div class="suffix">px</div>
           </div>
         </div>
       </div>
@@ -312,44 +326,13 @@
           <label>Glow blur</label>
           <div class="sliderRow">
             <input id="s_glowBlur" type="range" min="0" max="100" value="35" />
-            <div class="val" id="v_glowBlur"></div>
+            <input id="n_glowBlur" class="num" type="number" step="0.1" />
+            <div class="suffix">px</div>
           </div>
         </div>
         <div class="field">
           <label>Cor do glow</label>
           <input id="glowColor" type="color" value="#7c5cff" />
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="field">
-        <label>Ícone (único estilo)</label>
-        <select id="iconPick">
-          <option value="none">Nenhum</option>
-          <option value="pill">Pílula</option>
-          <option value="dot">Bolinha pequena</option>
-        </select>
-      </div>
-
-      <div class="row3">
-        <div class="field">
-          <label>Cor do ícone</label>
-          <input id="iconColor" type="color" value="#ffffff" />
-        </div>
-        <div class="field">
-          <label>Ícone escala</label>
-          <div class="sliderRow">
-            <input id="s_iconScale" type="range" min="0" max="100" value="50" />
-            <div class="val" id="v_iconScale"></div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Ícone atrás do texto?</label>
-          <select id="iconBehind">
-            <option value="yes" selected>Sim</option>
-            <option value="no">Não</option>
-          </select>
         </div>
       </div>
 
@@ -362,8 +345,7 @@
       </div>
 
       <p class="small">
-        Master sempre em <b>576×112</b>. O arquivo <b>288×56</b> é um downscale do master.<br/>
-        Centralização travada: texto e ícone sempre no centro.
+        Tudo é por-hit agora (inclusive cores). Texto sempre centralizado.
       </p>
     </div>
   </section>
@@ -371,17 +353,14 @@
   <section class="card">
     <div class="title">
       <strong>Preview</strong>
-      <div class="right">
-        <button id="toggleBG" class="secondary" type="button">Fundo preview</button>
-      </div>
+      <span class="pill" id="whichPill">editando: 300</span>
     </div>
 
     <div class="stage">
       <div class="stageTop">
         <div class="left">
-          <span class="pill" id="dimPill">576×112 (preview)</span>
-          <span class="pill" id="fontPill">fonte: Arial Black</span>
-          <span class="pill" id="whichPill">editando: 300</span>
+          <span class="pill">576×112 (preview)</span>
+          <span class="pill" id="fontPill">fonte: —</span>
         </div>
       </div>
 
@@ -397,7 +376,21 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  // ================= helpers =================
+  // ==========================================================
+  // 1) FONTES LOCAIS
+  // Coloque seus arquivos em: ./fonts/
+  // Depois edite a lista abaixo com os nomes exatos dos arquivos.
+  //
+  // Exemplo:
+  // { name: "Torus", file: "Torus-Regular.ttf" }
+  // { name: "Varela Round", file: "VarelaRound-Regular.ttf" }
+  // ==========================================================
+  const FONT_LIBRARY = [
+    { name: "Arial (fallback)", file: null }, // fallback do sistema
+    // { name: "MinhaFonte", file: "MinhaFonte.ttf" },
+  ];
+
+  // helpers
   const $ = (id)=>document.getElementById(id);
   const toast = (msg)=>{
     const t=$("toast");
@@ -410,72 +403,123 @@
   const sanitizeName=(s)=> (s||"judgement").toString().trim()
     .replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g,"_").slice(0,80) || "judgement";
 
-  // ================= fixed sizes =================
+  // sizes fixos
   const BASE_W = 288, BASE_H = 56;
   const MASTER_SCALE = 2;
   const MASTER_W = BASE_W * MASTER_SCALE;
   const MASTER_H = BASE_H * MASTER_SCALE;
 
-  // ================= state =================
+  // hits
   const keys = ["0","50","100","200","300","300g"];
-  const per = {};
-  for(const k of keys){
-    per[k] = {
-      text: k,
-      icon: "none",         // none | pill | dot
-      iconColor: "#ffffff",
-      iconScale01: 0.50,    // 0..1
-      iconBehind: true
-    };
-  }
   let active = "300";
 
-  // ================= sliders mapping (0..100) =================
-  // Cada slider é 0..100, mas internamente mapeamos pra um range útil.
-  // Isso atende seu pedido: "barra de drag 0 a 100 em todas as opções".
-  const shared = {
-    fontName: "Arial Black",
-    previewBG: false,
+  // ==========================================================
+  // 2) PARAMETROS POR HIT (TUDO INDIVIDUAL)
+  // ==========================================================
+  function makeDefaultsForHit(label){
+    return {
+      text: label,
 
-    // internal numeric values
-    fontSize: 34,       // base units (288x56)
-    tracking: 0,        // px
-    skewDeg: 0,         // degrees
+      fontKey: 0,         // índice no FONT_LIBRARY
+      fontSize: 34,       // px (base 288x56)
+      tracking: 0,        // px
+      skewDeg: 0,         // graus
 
-    fill: "#ffffff",
-    strokeW: 4,         // px
-    stroke: "#000000",
+      fill: "#ffffff",
+      strokeW: 4,
+      stroke: "#000000",
 
-    shadowBlur: 0,      // px
-    shadowX: 0,         // px
-    shadowY: 0,         // px
-    shadowColor: "#000000",
+      shadowBlur: 0,
+      shadowX: 0,
+      shadowY: 0,
+      shadowColor: "#000000",
 
-    glowBlur: 10,       // px
-    glowColor: "#7c5cff",
+      glowBlur: 10,
+      glowColor: "#7c5cff"
+    };
+  }
+
+  const per = {};
+  for(const k of keys) per[k] = makeDefaultsForHit(k);
+
+  // preview global
+  const shared = { previewBG:false };
+
+  // ==========================================================
+  // 3) SLIDERS 0..100 + VALOR EDITÁVEL (COM MAPEAMENTO)
+  // ==========================================================
+  // range linear: slider s(0..100) <-> value v(min..max)
+  function sToV(s, min, max){ return min + (s/100)*(max-min); }
+  function vToS(v, min, max){
+    if(max === min) return 0;
+    return ((v - min) / (max - min)) * 100;
+  }
+
+  // limites internos (pra digitar e pra slider)
+  const R = {
+    fontSize:   { min: 18,  max: 70,  step: 1   },
+    tracking:   { min: -8,  max: 8,   step: 0.1 },
+    skewDeg:    { min: -14, max: 14,  step: 0.1 },
+    strokeW:    { min: 0,   max: 10,  step: 0.1 },
+    glowBlur:   { min: 0,   max: 22,  step: 0.1 },
+    shadowBlur: { min: 0,   max: 18,  step: 0.1 },
+    shadowX:    { min: -10, max: 10,  step: 0.1 },
+    shadowY:    { min: -10, max: 10,  step: 0.1 },
   };
 
-  // Map functions (slider 0..100 -> value)
-  const map = {
-    fontSize: (s)=> 18 + (s/100) * 52,           // 18..70
-    tracking: (s)=> ((s-50)/50) * 8,             // -8..+8
-    skewDeg:  (s)=> ((s-50)/50) * 14,            // -14..+14
+  function setFromSlider(prop, s){
+    const hit = per[active];
+    const rr = R[prop];
+    hit[prop] = sToV(Number(s), rr.min, rr.max);
+  }
+  function setFromNumber(prop, v){
+    const hit = per[active];
+    const rr = R[prop];
+    hit[prop] = clamp(Number(v), rr.min, rr.max);
+  }
 
-    strokeW:  (s)=> (s/100) * 10,                // 0..10
-    glowBlur: (s)=> (s/100) * 22,                // 0..22
+  function syncControl(prop, sId, nId){
+    const hit = per[active];
+    const rr = R[prop];
+    const sEl = $(sId);
+    const nEl = $(nId);
 
-    shadowBlur:(s)=> (s/100) * 18,               // 0..18
-    shadowX:   (s)=> ((s-50)/50) * 10,           // -10..+10
-    shadowY:   (s)=> ((s-50)/50) * 10,           // -10..+10
+    // set steps for manual input
+    nEl.step = rr.step;
 
-    iconScale01:(s)=> (s/100),                   // 0..1
-  };
+    // write from state -> controls
+    const v = hit[prop];
+    sEl.value = String(clamp(vToS(v, rr.min, rr.max), 0, 100));
+    nEl.value = (rr.step >= 1 ? String(Math.round(v)) : String(Number(v).toFixed(1)));
+  }
 
-  // ================= canvas setup =================
+  function bindRangePair(prop, sId, nId){
+    const sEl = $(sId);
+    const nEl = $(nId);
+
+    const onSlider = ()=>{
+      setFromSlider(prop, sEl.value);
+      syncAllForActive(); // mantém coerente
+      renderPreview();
+    };
+    const onNumber = ()=>{
+      setFromNumber(prop, nEl.value);
+      syncAllForActive();
+      renderPreview();
+    };
+
+    sEl.addEventListener("input", onSlider);
+    sEl.addEventListener("change", onSlider);
+    nEl.addEventListener("input", onNumber);
+    nEl.addEventListener("change", onNumber);
+  }
+
+  // ==========================================================
+  // 4) CANVAS + PIPELINE DE QUALIDADE (MASK -> OUTLINE -> GLOW/SHADOW -> FILL)
+  // ==========================================================
   const canvas = $("c");
   const ctx = canvas.getContext("2d");
 
-  // offscreen: mask + work buffers + export buffers
   const maskC = document.createElement("canvas");
   const maskX = maskC.getContext("2d");
 
@@ -488,90 +532,46 @@
   const downC = document.createElement("canvas");
   const downX = downC.getContext("2d");
 
-  function setSize(cnv, w, h){
-    cnv.width = w; cnv.height = h;
-  }
+  function setSize(cnv, w, h){ cnv.width=w; cnv.height=h; }
 
   function clearCtx(x, w, h){
     x.clearRect(0,0,w,h);
     if(shared.previewBG){
       x.save();
-      x.fillStyle = "rgba(0,0,0,.35)";
+      x.fillStyle="rgba(0,0,0,.35)";
       x.fillRect(0,0,w,h);
       x.restore();
     }
   }
 
-  // ================= drawing primitives =================
-  function drawIconShape(x, W, H, scale, icon, color, scale01){
-    if(icon === "none") return;
-
-    const cx = W/2;
-    const cy = H/2;
-
-    x.save();
-    x.fillStyle = color;
-
-    if(icon === "pill"){
-      // pill horizontal: size tuned for judgement area
-      const baseW = 84 * scale;
-      const baseH = 22 * scale;
-      const w = baseW * (0.35 + 1.25*scale01);  // never too tiny
-      const h = baseH * (0.35 + 1.25*scale01);
-      const rx = h/2;
-
-      const px = cx - w/2;
-      const py = cy - h/2;
-
-      // rounded rect
-      x.beginPath();
-      x.moveTo(px+rx, py);
-      x.lineTo(px+w-rx, py);
-      x.quadraticCurveTo(px+w, py, px+w, py+rx);
-      x.lineTo(px+w, py+h-rx);
-      x.quadraticCurveTo(px+w, py+h, px+w-rx, py+h);
-      x.lineTo(px+rx, py+h);
-      x.quadraticCurveTo(px, py+h, px, py+h-rx);
-      x.lineTo(px, py+rx);
-      x.quadraticCurveTo(px, py, px+rx, py);
-      x.closePath();
-      x.fill();
-    }else if(icon === "dot"){
-      // small dot
-      const r = (6 * scale) * (0.35 + 1.6*scale01);
-      x.beginPath();
-      x.arc(cx, cy, r, 0, Math.PI*2);
-      x.fill();
-    }
-
-    x.restore();
-  }
-
-  function setupTextCtx(x, scale){
-    x.font = `${shared.fontSize*scale}px "${shared.fontName}"`;
+  function setupTextCtx(x, hit, scale){
+    x.font = `${hit.fontSize*scale}px "${getFontName(hit.fontKey)}"`;
     x.textAlign = "center";
     x.textBaseline = "alphabetic";
   }
 
-  // Render text mask (white) centered, snapped to integer pixels (reduz blur)
-  function renderTextMask(x, W, H, scale, text){
+  function renderTextMask(x, W, H, scale, hit){
     clearCtx(x, W, H);
+
     x.save();
-    setupTextCtx(x, scale);
+    setupTextCtx(x, hit, scale);
     x.fillStyle = "#ffffff";
 
+    const text = hit.text ?? "";
     const m = x.measureText(text);
-    const ascent  = (m.actualBoundingBoxAscent ?? m.fontBoundingBoxAscent ?? (shared.fontSize*0.8));
-    const descent = (m.actualBoundingBoxDescent ?? m.fontBoundingBoxDescent ?? (shared.fontSize*0.2));
-
+    const ascent  = (m.actualBoundingBoxAscent ?? m.fontBoundingBoxAscent ?? (hit.fontSize*0.8));
+    const descent = (m.actualBoundingBoxDescent ?? m.fontBoundingBoxDescent ?? (hit.fontSize*0.2));
     const baselineToMiddle = (ascent - descent)/2;
 
-    // centralização travada
-    const cx = Math.round(W/2); // snapping
+    // centralização travada + snapping
+    const cx = Math.round(W/2);
     const y0 = Math.round(H/2 + baselineToMiddle);
 
-    // tracking manual
-    const tracking = shared.tracking * scale;
+    const tracking = hit.tracking * scale;
+
+    // skew via transform (mantém centro)
+    const skew = Math.tan((hit.skewDeg || 0) * Math.PI/180);
+    x.transform(1, 0, skew, 1, 0, 0);
 
     if(!tracking){
       x.fillText(text, cx, y0);
@@ -590,9 +590,7 @@
     x.restore();
   }
 
-  // Expand mask by radius using multi-offset stamping (outline backbone)
   function expandMaskTo(x, W, H, radiusPx){
-    // x already cleared by caller
     x.save();
     x.globalCompositeOperation = "source-over";
     x.imageSmoothingEnabled = true;
@@ -603,8 +601,6 @@
       x.restore();
       return;
     }
-
-    // stamp in a disk-ish pattern
     for(let dy=-r; dy<=r; dy++){
       for(let dx=-r; dx<=r; dx++){
         if(dx*dx + dy*dy > r*r) continue;
@@ -622,38 +618,33 @@
     x.restore();
   }
 
-  function drawGlowFromMask(targetX, W, H, scale){
-    const blur = Math.max(0, shared.glowBlur * scale);
+  function drawGlowFromMask(targetX, W, H, scale, hit){
+    const blur = Math.max(0, hit.glowBlur * scale);
     if(blur <= 0) return;
 
-    // draw tinted mask with shadowBlur = glow
     targetX.save();
     targetX.shadowBlur = blur;
-    targetX.shadowColor = shared.glowColor;
+    targetX.shadowColor = hit.glowColor;
     targetX.shadowOffsetX = 0;
     targetX.shadowOffsetY = 0;
-    targetX.globalAlpha = 1;
 
-    // draw a solid rect clipped by mask, so shadow uses mask silhouette
-    // (we use workC as mask->color)
     clearCtx(workX, W, H);
     workX.drawImage(maskC, 0,0);
     tintMaskTo(workX, W, H, "#ffffff");
 
-    // drawing the mask onto target triggers the shadow glow
     targetX.drawImage(workC, 0,0);
     targetX.restore();
   }
 
-  function drawShadowFromMask(targetX, W, H, scale){
-    const blur = Math.max(0, shared.shadowBlur * scale);
-    const ox = shared.shadowX * scale;
-    const oy = shared.shadowY * scale;
+  function drawShadowFromMask(targetX, W, H, scale, hit){
+    const blur = Math.max(0, hit.shadowBlur * scale);
+    const ox = hit.shadowX * scale;
+    const oy = hit.shadowY * scale;
     if(blur <= 0 && ox === 0 && oy === 0) return;
 
     targetX.save();
     targetX.shadowBlur = blur;
-    targetX.shadowColor = shared.shadowColor;
+    targetX.shadowColor = hit.shadowColor;
     targetX.shadowOffsetX = ox;
     targetX.shadowOffsetY = oy;
 
@@ -665,60 +656,45 @@
     targetX.restore();
   }
 
-  function drawOutlineFromMask(targetX, W, H, scale){
-    const outlinePx = Math.max(0, shared.strokeW * scale);
+  function drawOutlineFromMask(targetX, W, H, scale, hit){
+    const outlinePx = Math.max(0, hit.strokeW * scale);
     if(outlinePx <= 0) return;
 
-    // expanded mask into workC
     clearCtx(workX, W, H);
     expandMaskTo(workX, W, H, outlinePx);
 
-    // subtract original mask -> keep only border
     workX.save();
     workX.globalCompositeOperation = "destination-out";
     workX.drawImage(maskC, 0,0);
     workX.restore();
 
-    // tint border
-    tintMaskTo(workX, W, H, shared.stroke);
-
+    tintMaskTo(workX, W, H, hit.stroke);
     targetX.drawImage(workC, 0,0);
   }
 
-  function drawFillFromMask(targetX, W, H){
+  function drawFillFromMask(targetX, W, H, hit){
     clearCtx(workX, W, H);
     workX.drawImage(maskC, 0,0);
-    tintMaskTo(workX, W, H, shared.fill);
+    tintMaskTo(workX, W, H, hit.fill);
     targetX.drawImage(workC, 0,0);
   }
 
   async function renderMaster(key){
+    const hit = per[key];
     setSize(masterC, MASTER_W, MASTER_H);
-    clearCtx(masterX, MASTER_W, MASTER_H);
-
-    const jd = per[key];
-    const scale = MASTER_SCALE;
-
-    // icon behind
-    if(jd.iconBehind){
-      drawIconShape(masterX, MASTER_W, MASTER_H, scale, jd.icon, jd.iconColor, jd.iconScale01);
-    }
-
-    // text pipeline
     setSize(maskC, MASTER_W, MASTER_H);
     setSize(workC, MASTER_W, MASTER_H);
-    renderTextMask(maskX, MASTER_W, MASTER_H, scale, jd.text);
 
-    // order: shadow -> glow -> outline -> fill (fica mais definido)
-    drawShadowFromMask(masterX, MASTER_W, MASTER_H, scale);
-    drawGlowFromMask(masterX, MASTER_W, MASTER_H, scale);
-    drawOutlineFromMask(masterX, MASTER_W, MASTER_H, scale);
-    drawFillFromMask(masterX, MASTER_W, MASTER_H);
+    clearCtx(masterX, MASTER_W, MASTER_H);
 
-    // icon front
-    if(!jd.iconBehind){
-      drawIconShape(masterX, MASTER_W, MASTER_H, scale, jd.icon, jd.iconColor, jd.iconScale01);
-    }
+    // mask do texto (centro travado)
+    renderTextMask(maskX, MASTER_W, MASTER_H, MASTER_SCALE, hit);
+
+    // ordem definida (mais “crisp”)
+    drawShadowFromMask(masterX, MASTER_W, MASTER_H, MASTER_SCALE, hit);
+    drawGlowFromMask(masterX, MASTER_W, MASTER_H, MASTER_SCALE, hit);
+    drawOutlineFromMask(masterX, MASTER_W, MASTER_H, MASTER_SCALE, hit);
+    drawFillFromMask(masterX, MASTER_W, MASTER_H, hit);
 
     return masterC;
   }
@@ -726,13 +702,13 @@
   async function renderPreview(){
     canvas.width = MASTER_W;
     canvas.height = MASTER_H;
-    clearCtx(ctx, MASTER_W, MASTER_H);
 
+    clearCtx(ctx, MASTER_W, MASTER_H);
     const master = await renderMaster(active);
     ctx.drawImage(master, 0,0);
 
-    $("fontPill").textContent = `fonte: ${shared.fontName}`;
     $("whichPill").textContent = `editando: ${active}`;
+    $("fontPill").textContent = `fonte: ${getFontName(per[active].fontKey)}`;
   }
 
   function canvasToBlob(cnv){
@@ -743,7 +719,6 @@
     setSize(downC, BASE_W, BASE_H);
     downX.clearRect(0,0,BASE_W,BASE_H);
 
-    // downscale com qualidade alta (sem mudar pixels)
     downX.imageSmoothingEnabled = true;
     downX.imageSmoothingQuality = "high";
     downX.drawImage(master, 0,0, MASTER_W,MASTER_H, 0,0, BASE_W,BASE_H);
@@ -760,7 +735,50 @@
     setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 200);
   }
 
-  // ================= UI build =================
+  // ==========================================================
+  // 5) FONT LOADER (local /fonts)
+  // ==========================================================
+  const loadedFonts = new Set();
+  function getFontName(fontKey){
+    const item = FONT_LIBRARY[fontKey] || FONT_LIBRARY[0];
+    return item?.name || "Arial";
+  }
+
+  async function ensureFontLoaded(fontKey){
+    const item = FONT_LIBRARY[fontKey] || FONT_LIBRARY[0];
+    if(!item || !item.file) return;
+
+    const family = item.name;
+    if(loadedFonts.has(family)) return;
+
+    try{
+      const url = `fonts/${encodeURIComponent(item.file)}`;
+      const face = new FontFace(family, `url(${url})`);
+      await face.load();
+      document.fonts.add(face);
+      loadedFonts.add(family);
+      $("statusPill").textContent = "fonte ok";
+    }catch(err){
+      console.error(err);
+      $("statusPill").textContent = "erro fonte";
+      toast("Falha ao carregar fonte local");
+    }
+  }
+
+  function buildFontSelect(){
+    const sel = $("fontSelect");
+    sel.innerHTML = "";
+    FONT_LIBRARY.forEach((f, idx)=>{
+      const o = document.createElement("option");
+      o.value = String(idx);
+      o.textContent = f.name + (f.file ? "" : " (sistema)");
+      sel.appendChild(o);
+    });
+  }
+
+  // ==========================================================
+  // 6) UI
+  // ==========================================================
   function buildTabs(){
     const root = $("tabs");
     root.innerHTML = "";
@@ -768,9 +786,10 @@
       const b=document.createElement("div");
       b.className="tab"+(k===active?" active":"");
       b.textContent=k;
-      b.addEventListener("click", ()=>{
+      b.addEventListener("click", async ()=>{
         active = k;
-        syncUIFromActive();
+        await ensureFontLoaded(per[active].fontKey);
+        syncAllForActive();
         buildTabs();
         renderPreview();
       });
@@ -778,79 +797,55 @@
     }
   }
 
-  function syncUIFromActive(){
-    const jd = per[active];
-    $("txt").value = jd.text;
-    $("iconPick").value = jd.icon;
-    $("iconColor").value = jd.iconColor;
-    $("iconBehind").value = jd.iconBehind ? "yes" : "no";
+  function syncAllForActive(){
+    const hit = per[active];
 
-    // slider icon
-    $("s_iconScale").value = Math.round(jd.iconScale01*100);
-    updateSliderLabels();
+    $("txt").value = hit.text;
+
+    $("fill").value = hit.fill;
+    $("stroke").value = hit.stroke;
+    $("shadowColor").value = hit.shadowColor;
+    $("glowColor").value = hit.glowColor;
+
+    $("fontSelect").value = String(hit.fontKey);
+
+    syncControl("fontSize", "s_fontSize", "n_fontSize");
+    syncControl("tracking", "s_tracking", "n_tracking");
+    syncControl("skewDeg", "s_skew", "n_skew");
+    syncControl("strokeW", "s_strokeW", "n_strokeW");
+    syncControl("shadowBlur", "s_shadowBlur", "n_shadowBlur");
+    syncControl("shadowX", "s_shadowX", "n_shadowX");
+    syncControl("shadowY", "s_shadowY", "n_shadowY");
+    syncControl("glowBlur", "s_glowBlur", "n_glowBlur");
   }
 
-  function updateSliderLabels(){
-    $("v_fontSize").textContent = `${shared.fontSize.toFixed(0)}px`;
-    $("v_tracking").textContent = `${shared.tracking.toFixed(1)}`;
-    $("v_skew").textContent = `${shared.skewDeg.toFixed(1)}°`;
-    $("v_strokeW").textContent = `${shared.strokeW.toFixed(1)}`;
-    $("v_glowBlur").textContent = `${shared.glowBlur.toFixed(1)}`;
-    $("v_shadowBlur").textContent = `${shared.shadowBlur.toFixed(1)}`;
-    $("v_shadowX").textContent = `${shared.shadowX.toFixed(1)}`;
-    $("v_shadowY").textContent = `${shared.shadowY.toFixed(1)}`;
-    $("v_iconScale").textContent = `${(per[active].iconScale01*100).toFixed(0)}%`;
-  }
+  // binds (sliders + numbers)
+  bindRangePair("fontSize", "s_fontSize", "n_fontSize");
+  bindRangePair("tracking", "s_tracking", "n_tracking");
+  bindRangePair("skewDeg",  "s_skew", "n_skew");
+  bindRangePair("strokeW",  "s_strokeW", "n_strokeW");
+  bindRangePair("shadowBlur","s_shadowBlur", "n_shadowBlur");
+  bindRangePair("shadowX",  "s_shadowX", "n_shadowX");
+  bindRangePair("shadowY",  "s_shadowY", "n_shadowY");
+  bindRangePair("glowBlur", "s_glowBlur", "n_glowBlur");
 
-  // ================= slider bindings (0..100 everywhere) =================
-  function bindSlider(id, apply){
-    const el=$(id);
-    const run=()=>{
-      apply(Number(el.value));
-      updateSliderLabels();
-      renderPreview();
-    };
-    el.addEventListener("input", run);
-    el.addEventListener("change", run);
-  }
-
-  bindSlider("s_fontSize", (s)=> shared.fontSize = map.fontSize(s));
-  bindSlider("s_tracking", (s)=> shared.tracking = map.tracking(s));
-  bindSlider("s_skew",    (s)=> shared.skewDeg  = map.skewDeg(s));
-  bindSlider("s_strokeW", (s)=> shared.strokeW  = map.strokeW(s));
-  bindSlider("s_glowBlur",(s)=> shared.glowBlur = map.glowBlur(s));
-  bindSlider("s_shadowBlur",(s)=> shared.shadowBlur = map.shadowBlur(s));
-  bindSlider("s_shadowX", (s)=> shared.shadowX = map.shadowX(s));
-  bindSlider("s_shadowY", (s)=> shared.shadowY = map.shadowY(s));
-
-  bindSlider("s_iconScale", (s)=> per[active].iconScale01 = map.iconScale01(s));
-
-  // ================= other bindings =================
+  // outros inputs por hit
   $("txt").addEventListener("input", (e)=>{
     per[active].text = e.target.value;
     renderPreview();
   });
 
-  $("fontName").addEventListener("input", (e)=>{
-    shared.fontName = e.target.value || "Arial Black";
-    renderPreview();
-  });
+  $("fill").addEventListener("input", (e)=>{ per[active].fill = e.target.value; renderPreview(); });
+  $("stroke").addEventListener("input", (e)=>{ per[active].stroke = e.target.value; renderPreview(); });
+  $("shadowColor").addEventListener("input", (e)=>{ per[active].shadowColor = e.target.value; renderPreview(); });
+  $("glowColor").addEventListener("input", (e)=>{ per[active].glowColor = e.target.value; renderPreview(); });
 
-  $("fill").addEventListener("input", (e)=>{ shared.fill = e.target.value; renderPreview(); });
-  $("stroke").addEventListener("input", (e)=>{ shared.stroke = e.target.value; renderPreview(); });
-  $("shadowColor").addEventListener("input", (e)=>{ shared.shadowColor = e.target.value; renderPreview(); });
-  $("glowColor").addEventListener("input", (e)=>{ shared.glowColor = e.target.value; renderPreview(); });
-
-  $("iconPick").addEventListener("change", (e)=>{
-    per[active].icon = e.target.value;
-    renderPreview();
-  });
-  $("iconColor").addEventListener("input", (e)=>{
-    per[active].iconColor = e.target.value;
-    renderPreview();
-  });
-  $("iconBehind").addEventListener("change", (e)=>{
-    per[active].iconBehind = (e.target.value === "yes");
+  $("fontSelect").addEventListener("change", async (e)=>{
+    const idx = Number(e.target.value);
+    per[active].fontKey = Number.isFinite(idx) ? idx : 0;
+    $("statusPill").textContent = "carregando fonte…";
+    await ensureFontLoaded(per[active].fontKey);
+    await document.fonts.ready;
     renderPreview();
   });
 
@@ -860,32 +855,11 @@
     toast(`Fundo preview: ${shared.previewBG ? "ON" : "OFF"}`);
   });
 
-  // ================= font upload =================
-  $("fontFile").addEventListener("change", async (e)=>{
-    const file = e.target.files?.[0];
-    if(!file) return;
-    try{
-      const buf = await file.arrayBuffer();
-      const fname = file.name.replace(/\.(ttf|otf)$/i,"");
-      const face = new FontFace(fname, buf);
-      $("statusPill").textContent = "carregando fonte…";
-      await face.load();
-      document.fonts.add(face);
-      shared.fontName = fname;
-      $("fontName").value = fname;
-      $("statusPill").textContent = "fonte ok";
-      toast("Fonte carregada ✅");
-      await document.fonts.ready;
-      renderPreview();
-    }catch(err){
-      console.error(err);
-      $("statusPill").textContent = "erro fonte";
-      toast("Falha ao carregar fonte 😵");
-    }
-  });
-
-  // ================= export =================
+  // export
   async function exportOne(key){
+    await ensureFontLoaded(per[key].fontKey);
+    await document.fonts.ready;
+
     const master = await renderMaster(key);
     const normal = await renderNormalFromMaster(master);
 
@@ -913,66 +887,23 @@
   });
 
   $("reset").addEventListener("click", async ()=>{
-    // reset sliders (0..100) to defaults
-    $("s_fontSize").value = 55;   // ~34px
-    $("s_tracking").value = 50;   // 0
-    $("s_skew").value = 50;       // 0
-    $("s_strokeW").value = 35;    // ~3.5
-    $("s_glowBlur").value = 35;   // ~7.7
-    $("s_shadowBlur").value = 0;
-    $("s_shadowX").value = 50;
-    $("s_shadowY").value = 50;
-
-    shared.fontName = "Arial Black";
-    $("fontName").value = shared.fontName;
-
-    shared.fill = "#ffffff"; $("fill").value = shared.fill;
-    shared.stroke = "#000000"; $("stroke").value = shared.stroke;
-    shared.shadowColor = "#000000"; $("shadowColor").value = shared.shadowColor;
-    shared.glowColor = "#7c5cff"; $("glowColor").value = shared.glowColor;
-
-    // apply mappings
-    shared.fontSize = map.fontSize(Number($("s_fontSize").value));
-    shared.tracking = map.tracking(Number($("s_tracking").value));
-    shared.skewDeg = map.skewDeg(Number($("s_skew").value));
-    shared.strokeW = map.strokeW(Number($("s_strokeW").value));
-    shared.glowBlur = map.glowBlur(Number($("s_glowBlur").value));
-    shared.shadowBlur = map.shadowBlur(Number($("s_shadowBlur").value));
-    shared.shadowX = map.shadowX(Number($("s_shadowX").value));
-    shared.shadowY = map.shadowY(Number($("s_shadowY").value));
-
-    for(const k of keys){
-      per[k].text = k;
-      per[k].icon = "none";
-      per[k].iconColor = "#ffffff";
-      per[k].iconScale01 = 0.50;
-      per[k].iconBehind = true;
-    }
-
+    for(const k of keys) per[k] = makeDefaultsForHit(k);
     active = "300";
     buildTabs();
-    syncUIFromActive();
-    updateSliderLabels();
+    buildFontSelect();
+    await ensureFontLoaded(per[active].fontKey);
+    syncAllForActive();
     $("statusPill").textContent = "reset";
     toast("Reset feito");
     await renderPreview();
   });
 
-  // ================= init =================
+  // init
   (async function init(){
-    // initial apply from slider defaults
-    shared.fontSize = map.fontSize(Number($("s_fontSize").value));
-    shared.tracking = map.tracking(Number($("s_tracking").value));
-    shared.skewDeg = map.skewDeg(Number($("s_skew").value));
-    shared.strokeW = map.strokeW(Number($("s_strokeW").value));
-    shared.glowBlur = map.glowBlur(Number($("s_glowBlur").value));
-    shared.shadowBlur = map.shadowBlur(Number($("s_shadowBlur").value));
-    shared.shadowX = map.shadowX(Number($("s_shadowX").value));
-    shared.shadowY = map.shadowY(Number($("s_shadowY").value));
-
     buildTabs();
-    syncUIFromActive();
-    updateSliderLabels();
+    buildFontSelect();
+    await ensureFontLoaded(per[active].fontKey);
+    syncAllForActive();
     await document.fonts.ready;
     await renderPreview();
     toast("Pronto ✅");
