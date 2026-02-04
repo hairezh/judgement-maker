@@ -8,7 +8,8 @@
     :root{
       --bg:#0b0c0f; --fg:#e8e8e8; --muted:#9aa0a6;
       --panel:rgba(255,255,255,.04); --border:rgba(255,255,255,.10);
-      --accent:#7c5cff; --r:14px; --r2:10px;
+      --accent:#7c5cff; --accent2:#00d4ff;
+      --r:14px; --r2:10px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
@@ -22,24 +23,26 @@
       color:var(--fg);
     }
     header{
-      padding:18px 18px 10px;
-      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      padding:16px 18px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
       border-bottom:1px solid var(--border);
       background:rgba(0,0,0,.20);
       backdrop-filter: blur(8px);
       position:sticky; top:0; z-index:5;
     }
+    .brand{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
     header h1{margin:0; font-size:16px; letter-spacing:.2px}
     header .hint{color:var(--muted); font-size:12px}
+    .topRight{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
 
     .wrap{
       padding:18px;
       display:grid;
-      grid-template-columns: 480px 1fr;
+      grid-template-columns: 520px 1fr;
       gap:14px;
       align-items:start;
     }
-    @media (max-width: 980px){
+    @media (max-width: 1060px){
       .wrap{grid-template-columns: 1fr;}
     }
 
@@ -58,6 +61,17 @@
     .card .title strong{font-size:13px}
     .card .content{padding:12px}
 
+    .pill{
+      font-family:var(--mono);
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.22);
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
     .tabs{
       display:flex; flex-wrap:wrap; gap:8px;
       padding:10px 12px;
@@ -73,16 +87,18 @@
       font-size:12px;
       cursor:pointer;
       user-select:none;
+      transition:.12s;
     }
+    .tab:hover{border-color:rgba(255,255,255,.18)}
     .tab.active{
       background:rgba(124,92,255,.30);
-      border-color:rgba(124,92,255,.55);
+      border-color:rgba(124,92,255,.60);
       color:var(--fg);
     }
 
     .field{display:flex; flex-direction:column; gap:6px; margin-bottom:10px}
     label{font-size:12px; color:var(--muted)}
-    input[type="text"], select{
+    input[type="text"], select, textarea{
       width:100%;
       padding:10px 10px;
       border-radius:12px;
@@ -91,6 +107,7 @@
       color:var(--fg);
       outline:none;
     }
+    textarea{min-height:86px; resize:vertical}
     input[type="color"]{
       width:100%;
       height:40px;
@@ -113,23 +130,75 @@
       cursor:pointer;
       font-weight:600;
       font-size:12px;
+      transition:.12s;
     }
     button:hover{background:rgba(124,92,255,.28)}
     button.secondary{background:rgba(255,255,255,.06)}
     button.secondary:hover{background:rgba(255,255,255,.10)}
+    button.danger{background:rgba(255,80,80,.14)}
+    button.danger:hover{background:rgba(255,80,80,.22)}
+    button.ghost{
+      background:transparent;
+      border-color:rgba(255,255,255,.14);
+    }
+    button.ghost:hover{background:rgba(255,255,255,.06)}
+    button.small{padding:8px 10px; border-radius:10px}
 
-    .pill{
-      font-family:var(--mono);
-      font-size:11px;
-      padding:4px 8px;
-      border-radius:12px;
+    .divider{height:1px; background:var(--border); margin:10px 0}
+    .smallText{font-size:12px; color:var(--muted); line-height:1.45}
+
+    /* sliders com valor editável */
+    .sliderRow{
+      display:flex; align-items:center; gap:10px;
+      padding:10px;
       border:1px solid var(--border);
       background:rgba(0,0,0,.22);
-      color:var(--muted);
+      border-radius:12px;
     }
-    .divider{height:1px; background:var(--border); margin:10px 0}
-    .small{font-size:12px; color:var(--muted); line-height:1.4}
+    .sliderRow input[type="range"]{width:100%}
+    .num{
+      width:98px;
+      font-family:var(--mono);
+      font-size:12px;
+      padding:8px 8px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.25);
+      color:var(--fg);
+      outline:none;
+      text-align:right;
+    }
+    .suffix{
+      font-family:var(--mono);
+      font-size:11px;
+      color:var(--muted);
+      min-width:28px;
+      text-align:left;
+    }
 
+    /* sections */
+    details{
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.16);
+      border-radius:12px;
+      overflow:hidden;
+      margin-bottom:10px;
+    }
+    summary{
+      cursor:pointer;
+      list-style:none;
+      padding:10px 12px;
+      user-select:none;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--border);
+    }
+    summary::-webkit-details-marker{display:none}
+    .sumLeft{display:flex; align-items:center; gap:10px}
+    .sumTitle{font-size:12px; font-weight:700}
+    .sumHint{font-size:11px; color:var(--muted)}
+    details .inside{padding:12px}
+
+    /* preview */
     .stage{display:flex; flex-direction:column; gap:12px; padding:12px;}
     .stageTop{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
     .stageTop .left{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
@@ -157,35 +226,6 @@
       image-rendering:auto;
     }
 
-    /* sliders com valor editável */
-    .sliderRow{
-      display:flex; align-items:center; gap:10px;
-      padding:10px;
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.22);
-      border-radius:12px;
-    }
-    .sliderRow input[type="range"]{width:100%}
-    .num{
-      width:90px;
-      font-family:var(--mono);
-      font-size:12px;
-      padding:8px 8px;
-      border-radius:10px;
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.25);
-      color:var(--fg);
-      outline:none;
-      text-align:right;
-    }
-    .suffix{
-      font-family:var(--mono);
-      font-size:11px;
-      color:var(--muted);
-      min-width:28px;
-      text-align:left;
-    }
-
     .toast{
       position:fixed; right:14px; bottom:14px;
       padding:10px 12px;
@@ -198,169 +238,321 @@
       transform:translateY(8px);
       transition:.2s;
       pointer-events:none;
+      max-width: min(480px, calc(100vw - 28px));
     }
     .toast.show{opacity:1; transform:translateY(0)}
+
+    .progress{
+      height:8px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+    }
+    .progress > div{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, rgba(124,92,255,.9), rgba(0,212,255,.75));
+      transition: width .15s;
+    }
+
+    .kbd{
+      font-family:var(--mono);
+      font-size:11px;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:6px 8px;
+      border-radius:10px;
+      background:rgba(0,0,0,.20);
+    }
   </style>
 </head>
 <body>
 <header>
-  <h1>judgement-maker</h1>
-  <span class="hint">
-    Export fixo: 288×56 e 576×112 (@2x). Master sempre @2x. Tudo centralizado. Configs por hit.
-  </span>
+  <div class="brand">
+    <h1>judgement-maker</h1>
+    <span class="hint">288×56 + 576×112 (@2x). Master sempre @2x. Centralizado travado. Config por hit. Presets.</span>
+  </div>
+  <div class="topRight">
+    <span class="pill" id="savePill">salvo</span>
+    <span class="pill" id="statusPill">pronto</span>
+  </div>
 </header>
 
 <div class="wrap">
+  <!-- LEFT -->
   <section class="card">
     <div class="title">
       <strong>Config</strong>
-      <span class="pill" id="statusPill">pronto</span>
+      <div class="btns">
+        <button id="copyHit" class="ghost small" type="button">Copiar hit</button>
+        <button id="pasteHit" class="ghost small" type="button">Colar hit</button>
+        <button id="applyAll" class="ghost small" type="button">Aplicar p/ todos</button>
+      </div>
     </div>
 
     <div class="tabs" id="tabs"></div>
 
     <div class="content">
-      <div class="field">
-        <label>Texto (só deste hit)</label>
-        <input id="txt" type="text" value="300" />
-      </div>
 
       <div class="row">
+        <div class="field">
+          <label>Texto (só deste hit)</label>
+          <input id="txt" type="text" value="300" />
+        </div>
         <div class="field">
           <label>Fonte (local)</label>
           <select id="fontSelect"></select>
         </div>
-        <div class="field">
-          <label>Fundo preview</label>
-          <button id="toggleBG" class="secondary" type="button">Alternar</button>
-        </div>
-      </div>
-
-      <p class="small">
-        Fontes locais: coloque arquivos em <b>./fonts/</b> e edite a lista <b>FONT_LIBRARY</b> no script.
-      </p>
-
-      <div class="divider"></div>
-
-      <!-- sliders por hit -->
-      <div class="field">
-        <label>Tamanho da fonte</label>
-        <div class="sliderRow">
-          <input id="s_fontSize" type="range" min="0" max="100" value="55" />
-          <input id="n_fontSize" class="num" type="number" step="1" />
-          <div class="suffix">px</div>
-        </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label>Tracking</label>
-          <div class="sliderRow">
-            <input id="s_tracking" type="range" min="0" max="100" value="50" />
-            <input id="n_tracking" class="num" type="number" step="0.1" />
-            <div class="suffix">px</div>
-          </div>
+          <label>Normal 288×56</label>
+          <select id="downscaleMode">
+            <option value="smooth" selected>Suave (smoothing)</option>
+            <option value="crisp">Crisp (sem smoothing)</option>
+          </select>
         </div>
         <div class="field">
-          <label>Inclinação</label>
-          <div class="sliderRow">
-            <input id="s_skew" type="range" min="0" max="100" value="50" />
-            <input id="n_skew" class="num" type="number" step="0.1" />
-            <div class="suffix">°</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row3">
-        <div class="field">
-          <label>Cor do texto</label>
-          <input id="fill" type="color" value="#ffffff" />
-        </div>
-        <div class="field">
-          <label>Outline</label>
-          <div class="sliderRow">
-            <input id="s_strokeW" type="range" min="0" max="100" value="35" />
-            <input id="n_strokeW" class="num" type="number" step="0.1" />
-            <div class="suffix">px</div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Cor do outline</label>
-          <input id="stroke" type="color" value="#000000" />
-        </div>
-      </div>
-
-      <div class="row3">
-        <div class="field">
-          <label>Sombra blur</label>
-          <div class="sliderRow">
-            <input id="s_shadowBlur" type="range" min="0" max="100" value="0" />
-            <input id="n_shadowBlur" class="num" type="number" step="0.1" />
-            <div class="suffix">px</div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Sombra X</label>
-          <div class="sliderRow">
-            <input id="s_shadowX" type="range" min="0" max="100" value="50" />
-            <input id="n_shadowX" class="num" type="number" step="0.1" />
-            <div class="suffix">px</div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Sombra Y</label>
-          <div class="sliderRow">
-            <input id="s_shadowY" type="range" min="0" max="100" value="50" />
-            <input id="n_shadowY" class="num" type="number" step="0.1" />
-            <div class="suffix">px</div>
+          <label>Preview</label>
+          <div class="btns">
+            <button id="toggleBG" class="secondary" type="button">Fundo</button>
+            <button id="resetHit" class="danger" type="button">Reset hit</button>
           </div>
         </div>
       </div>
 
-      <div class="row3">
-        <div class="field">
-          <label>Cor da sombra</label>
-          <input id="shadowColor" type="color" value="#000000" />
-        </div>
-        <div class="field">
-          <label>Glow blur</label>
-          <div class="sliderRow">
-            <input id="s_glowBlur" type="range" min="0" max="100" value="35" />
-            <input id="n_glowBlur" class="num" type="number" step="0.1" />
-            <div class="suffix">px</div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Cor do glow</label>
-          <input id="glowColor" type="color" value="#7c5cff" />
-        </div>
+      <div class="smallText">
+        Fontes locais: coloque arquivos em <b>./fonts/</b> e edite <b>FONT_LIBRARY</b>.
       </div>
 
       <div class="divider"></div>
 
-      <div class="btns">
-        <button id="downloadOne" type="button">Baixar (selecionado + @2x)</button>
-        <button id="exportAll" type="button">Exportar 12 PNGs</button>
-        <button id="reset" class="secondary" type="button">Reset</button>
-      </div>
+      <!-- Sections -->
+      <details open>
+        <summary>
+          <div class="sumLeft">
+            <div class="sumTitle">Texto</div>
+            <div class="sumHint">tamanho / tracking / inclinação</div>
+          </div>
+          <span class="kbd">0–100 + digitar</span>
+        </summary>
+        <div class="inside">
+          <div class="field">
+            <label>Tamanho da fonte</label>
+            <div class="sliderRow">
+              <input id="s_fontSize" type="range" min="0" max="100" value="55" />
+              <input id="n_fontSize" class="num" type="number" step="1" />
+              <div class="suffix">px</div>
+            </div>
+          </div>
 
-      <p class="small">
-        Tudo é por-hit agora (inclusive cores). Texto sempre centralizado.
-      </p>
+          <div class="row">
+            <div class="field">
+              <label>Tracking</label>
+              <div class="sliderRow">
+                <input id="s_tracking" type="range" min="0" max="100" value="50" />
+                <input id="n_tracking" class="num" type="number" step="0.1" />
+                <div class="suffix">px</div>
+              </div>
+            </div>
+            <div class="field">
+              <label>Inclinação</label>
+              <div class="sliderRow">
+                <input id="s_skewDeg" type="range" min="0" max="100" value="50" />
+                <input id="n_skewDeg" class="num" type="number" step="0.1" />
+                <div class="suffix">°</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details open>
+        <summary>
+          <div class="sumLeft">
+            <div class="sumTitle">Cores</div>
+            <div class="sumHint">fill / outline</div>
+          </div>
+          <span class="kbd">por hit</span>
+        </summary>
+        <div class="inside">
+          <div class="row3">
+            <div class="field">
+              <label>Cor do texto</label>
+              <input id="fill" type="color" value="#ffffff" />
+            </div>
+            <div class="field">
+              <label>Outline</label>
+              <div class="sliderRow">
+                <input id="s_strokeW" type="range" min="0" max="100" value="35" />
+                <input id="n_strokeW" class="num" type="number" step="0.1" />
+                <div class="suffix">px</div>
+              </div>
+            </div>
+            <div class="field">
+              <label>Cor do outline</label>
+              <input id="stroke" type="color" value="#000000" />
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <div class="sumLeft">
+            <div class="sumTitle">Glow</div>
+            <div class="sumHint">blur + cor</div>
+          </div>
+          <span class="kbd">camada</span>
+        </summary>
+        <div class="inside">
+          <div class="row">
+            <div class="field">
+              <label>Glow blur</label>
+              <div class="sliderRow">
+                <input id="s_glowBlur" type="range" min="0" max="100" value="35" />
+                <input id="n_glowBlur" class="num" type="number" step="0.1" />
+                <div class="suffix">px</div>
+              </div>
+            </div>
+            <div class="field">
+              <label>Cor do glow</label>
+              <input id="glowColor" type="color" value="#7c5cff" />
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <div class="sumLeft">
+            <div class="sumTitle">Sombra</div>
+            <div class="sumHint">blur + offset + cor</div>
+          </div>
+          <span class="kbd">camada</span>
+        </summary>
+        <div class="inside">
+          <div class="row3">
+            <div class="field">
+              <label>Sombra blur</label>
+              <div class="sliderRow">
+                <input id="s_shadowBlur" type="range" min="0" max="100" value="0" />
+                <input id="n_shadowBlur" class="num" type="number" step="0.1" />
+                <div class="suffix">px</div>
+              </div>
+            </div>
+            <div class="field">
+              <label>Sombra X</label>
+              <div class="sliderRow">
+                <input id="s_shadowX" type="range" min="0" max="100" value="50" />
+                <input id="n_shadowX" class="num" type="number" step="0.1" />
+                <div class="suffix">px</div>
+              </div>
+            </div>
+            <div class="field">
+              <label>Sombra Y</label>
+              <div class="sliderRow">
+                <input id="s_shadowY" type="range" min="0" max="100" value="50" />
+                <input id="n_shadowY" class="num" type="number" step="0.1" />
+                <div class="suffix">px</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Cor da sombra</label>
+            <input id="shadowColor" type="color" value="#000000" />
+          </div>
+        </div>
+      </details>
+
+      <div class="divider"></div>
+
+      <details open>
+        <summary>
+          <div class="sumLeft">
+            <div class="sumTitle">Export</div>
+            <div class="sumHint">selecionado / todos</div>
+          </div>
+          <span class="kbd">12 PNGs</span>
+        </summary>
+        <div class="inside">
+          <div class="btns">
+            <button id="downloadOne" type="button">Baixar (hit + @2x)</button>
+            <button id="exportAll" type="button">Exportar 12 PNGs</button>
+            <button id="resetAll" class="secondary" type="button">Reset geral</button>
+          </div>
+          <div style="margin-top:10px;">
+            <div class="progress"><div id="progBar"></div></div>
+            <div class="smallText" id="progText" style="margin-top:8px;">—</div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <div class="sumLeft">
+            <div class="sumTitle">Presets</div>
+            <div class="sumHint">salvar / carregar / importar</div>
+          </div>
+          <span class="kbd">JSON</span>
+        </summary>
+        <div class="inside">
+          <div class="row">
+            <div class="field">
+              <label>Preset</label>
+              <select id="presetSelect"></select>
+            </div>
+            <div class="field">
+              <label>Nome do preset</label>
+              <input id="presetName" type="text" placeholder="ex: meu-estilo-v1" />
+            </div>
+          </div>
+          <div class="btns">
+            <button id="savePreset" type="button">Salvar preset</button>
+            <button id="loadPreset" class="secondary" type="button">Carregar preset</button>
+            <button id="deletePreset" class="danger" type="button">Apagar preset</button>
+          </div>
+          <div class="divider"></div>
+          <div class="row">
+            <div class="field">
+              <label>Exportar JSON</label>
+              <button id="exportJSON" class="secondary" type="button">Baixar JSON</button>
+            </div>
+            <div class="field">
+              <label>Importar JSON</label>
+              <input id="importJSON" type="file" accept="application/json" />
+            </div>
+          </div>
+          <div class="smallText">
+            Presets guardam tudo (todos hits + opções). Também salva automático no navegador.
+          </div>
+        </div>
+      </details>
+
     </div>
   </section>
 
+  <!-- RIGHT -->
   <section class="card">
     <div class="title">
       <strong>Preview</strong>
-      <span class="pill" id="whichPill">editando: 300</span>
+      <div class="btns">
+        <span class="pill" id="whichPill">editando: 300</span>
+        <span class="pill" id="fontPill">fonte: —</span>
+      </div>
     </div>
 
     <div class="stage">
       <div class="stageTop">
         <div class="left">
           <span class="pill">576×112 (preview)</span>
-          <span class="pill" id="fontPill">fonte: —</span>
+          <span class="pill" id="modePill">normal: suave</span>
+        </div>
+        <div class="btns">
+          <span class="pill">texto/posição travados no centro</span>
         </div>
       </div>
 
@@ -368,7 +560,9 @@
         <canvas id="c"></canvas>
       </div>
 
-      <p class="small">Export sai com fundo transparente. Xadrez é só preview.</p>
+      <div class="smallText">
+        Export sai com fundo transparente. Xadrez é só preview.
+      </div>
     </div>
   </section>
 </div>
@@ -377,85 +571,147 @@
 
 <script>
   // ==========================================================
-  // 1) FONTES LOCAIS
-  // Coloque seus arquivos em: ./fonts/
-  // Depois edite a lista abaixo com os nomes exatos dos arquivos.
-  //
-  // Exemplo:
-  // { name: "Torus", file: "Torus-Regular.ttf" }
-  // { name: "Varela Round", file: "VarelaRound-Regular.ttf" }
+  // FONTES LOCAIS
+  // - Coloque arquivos em: ./fonts/
+  // - Edite esta lista:
   // ==========================================================
   const FONT_LIBRARY = [
-    { name: "Arial (fallback)", file: null }, // fallback do sistema
+    { name: "Arial (fallback)", file: null },
     // { name: "MinhaFonte", file: "MinhaFonte.ttf" },
+    // { name: "OutraFonte", file: "OutraFonte.otf" },
   ];
 
-  // helpers
+  // ==========================================================
+  // Helpers
+  // ==========================================================
   const $ = (id)=>document.getElementById(id);
-  const toast = (msg)=>{
-    const t=$("toast");
-    t.textContent=msg; t.classList.add("show");
-    clearTimeout(toast._tm);
-    toast._tm=setTimeout(()=>t.classList.remove("show"),1600);
-  };
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
   const sanitizeName=(s)=> (s||"judgement").toString().trim()
     .replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g,"_").slice(0,80) || "judgement";
+  const toast = (msg)=>{
+    const t=$("toast");
+    t.textContent=msg; t.classList.add("show");
+    clearTimeout(toast._tm);
+    toast._tm=setTimeout(()=>t.classList.remove("show"), 1600);
+  };
 
-  // sizes fixos
-  const BASE_W = 288, BASE_H = 56;
-  const MASTER_SCALE = 2;
-  const MASTER_W = BASE_W * MASTER_SCALE;
-  const MASTER_H = BASE_H * MASTER_SCALE;
-
-  // hits
-  const keys = ["0","50","100","200","300","300g"];
-  let active = "300";
+  // debounce render (evita lag)
+  function debounce(fn, ms){
+    let t=null;
+    return (...args)=>{
+      clearTimeout(t);
+      t=setTimeout(()=>fn(...args), ms);
+    };
+  }
 
   // ==========================================================
-  // 2) PARAMETROS POR HIT (TUDO INDIVIDUAL)
+  // Fixed sizes
   // ==========================================================
+  const BASE_W=288, BASE_H=56;
+  const MASTER_SCALE=2;
+  const MASTER_W=BASE_W*MASTER_SCALE, MASTER_H=BASE_H*MASTER_SCALE;
+
+  // ==========================================================
+  // Hits
+  // ==========================================================
+  const keys=["0","50","100","200","300","300g"];
+  let active="300";
+
   function makeDefaultsForHit(label){
     return {
       text: label,
+      fontKey: 0,
 
-      fontKey: 0,         // índice no FONT_LIBRARY
-      fontSize: 34,       // px (base 288x56)
-      tracking: 0,        // px
-      skewDeg: 0,         // graus
+      fontSize: 34,   // base (288x56)
+      tracking: 0,
+      skewDeg: 0,
 
       fill: "#ffffff",
       strokeW: 4,
       stroke: "#000000",
 
+      glowBlur: 10,
+      glowColor: "#7c5cff",
+
       shadowBlur: 0,
       shadowX: 0,
       shadowY: 0,
       shadowColor: "#000000",
-
-      glowBlur: 10,
-      glowColor: "#7c5cff"
     };
   }
 
-  const per = {};
-  for(const k of keys) per[k] = makeDefaultsForHit(k);
+  // ==========================================================
+  // State + persistence
+  // ==========================================================
+  const STORAGE_KEY = "judgement_maker_state_v3";
+  const PRESET_KEY = "judgement_maker_presets_v3";
 
-  // preview global
-  const shared = { previewBG:false };
+  let state = {
+    previewBG:false,
+    downscaleMode:"smooth", // smooth | crisp
+    per: Object.fromEntries(keys.map(k=>[k, makeDefaultsForHit(k)])),
+  };
+
+  // clipboard for hit copy/paste
+  let hitClipboard = null;
+
+  function deepCopy(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return;
+      const s = JSON.parse(raw);
+      if(!s || !s.per) return;
+      // merge conservatively
+      state.previewBG = !!s.previewBG;
+      state.downscaleMode = (s.downscaleMode === "crisp") ? "crisp" : "smooth";
+      for(const k of keys){
+        if(s.per?.[k]) state.per[k] = { ...makeDefaultsForHit(k), ...s.per[k] };
+      }
+    }catch(e){}
+  }
+  function saveState(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      $("savePill").textContent = "salvo";
+    }catch(e){
+      $("savePill").textContent = "não salvo";
+    }
+  }
+  const saveStateDebounced = debounce(saveState, 250);
+
+  function setUnsaved(){
+    $("savePill").textContent = "editando…";
+    saveStateDebounced();
+  }
+
+  // presets
+  let presets = {};
+  function loadPresets(){
+    try{
+      presets = JSON.parse(localStorage.getItem(PRESET_KEY) || "{}") || {};
+    }catch(e){
+      presets = {};
+    }
+  }
+  function savePresets(){
+    localStorage.setItem(PRESET_KEY, JSON.stringify(presets));
+  }
+
+  function listPresetNames(){
+    return Object.keys(presets).sort((a,b)=>a.localeCompare(b));
+  }
 
   // ==========================================================
-  // 3) SLIDERS 0..100 + VALOR EDITÁVEL (COM MAPEAMENTO)
+  // Sliders 0..100 + manual value (mapeamento)
   // ==========================================================
-  // range linear: slider s(0..100) <-> value v(min..max)
   function sToV(s, min, max){ return min + (s/100)*(max-min); }
   function vToS(v, min, max){
     if(max === min) return 0;
     return ((v - min) / (max - min)) * 100;
   }
-
-  // limites internos (pra digitar e pra slider)
   const R = {
     fontSize:   { min: 18,  max: 70,  step: 1   },
     tracking:   { min: -8,  max: 8,   step: 0.1 },
@@ -467,276 +723,41 @@
     shadowY:    { min: -10, max: 10,  step: 0.1 },
   };
 
-  function setFromSlider(prop, s){
-    const hit = per[active];
-    const rr = R[prop];
-    hit[prop] = sToV(Number(s), rr.min, rr.max);
-  }
-  function setFromNumber(prop, v){
-    const hit = per[active];
-    const rr = R[prop];
-    hit[prop] = clamp(Number(v), rr.min, rr.max);
-  }
+  function hit(){ return state.per[active]; }
 
-  function syncControl(prop, sId, nId){
-    const hit = per[active];
+  function syncPair(prop, sId, nId){
     const rr = R[prop];
-    const sEl = $(sId);
-    const nEl = $(nId);
-
-    // set steps for manual input
+    const sEl=$(sId), nEl=$(nId);
     nEl.step = rr.step;
 
-    // write from state -> controls
-    const v = hit[prop];
+    const v = hit()[prop];
     sEl.value = String(clamp(vToS(v, rr.min, rr.max), 0, 100));
     nEl.value = (rr.step >= 1 ? String(Math.round(v)) : String(Number(v).toFixed(1)));
   }
 
-  function bindRangePair(prop, sId, nId){
-    const sEl = $(sId);
-    const nEl = $(nId);
+  function bindPair(prop, sId, nId, onChange){
+    const rr = R[prop];
+    const sEl=$(sId), nEl=$(nId);
 
-    const onSlider = ()=>{
-      setFromSlider(prop, sEl.value);
-      syncAllForActive(); // mantém coerente
-      renderPreview();
+    const fromSlider = ()=>{
+      hit()[prop] = sToV(Number(sEl.value), rr.min, rr.max);
+      syncAllForActive(false);
+      onChange();
     };
-    const onNumber = ()=>{
-      setFromNumber(prop, nEl.value);
-      syncAllForActive();
-      renderPreview();
+    const fromNumber = ()=>{
+      hit()[prop] = clamp(Number(nEl.value), rr.min, rr.max);
+      syncAllForActive(false);
+      onChange();
     };
 
-    sEl.addEventListener("input", onSlider);
-    sEl.addEventListener("change", onSlider);
-    nEl.addEventListener("input", onNumber);
-    nEl.addEventListener("change", onNumber);
+    sEl.addEventListener("input", fromSlider);
+    sEl.addEventListener("change", fromSlider);
+    nEl.addEventListener("input", fromNumber);
+    nEl.addEventListener("change", fromNumber);
   }
 
   // ==========================================================
-  // 4) CANVAS + PIPELINE DE QUALIDADE (MASK -> OUTLINE -> GLOW/SHADOW -> FILL)
-  // ==========================================================
-  const canvas = $("c");
-  const ctx = canvas.getContext("2d");
-
-  const maskC = document.createElement("canvas");
-  const maskX = maskC.getContext("2d");
-
-  const workC = document.createElement("canvas");
-  const workX = workC.getContext("2d");
-
-  const masterC = document.createElement("canvas");
-  const masterX = masterC.getContext("2d");
-
-  const downC = document.createElement("canvas");
-  const downX = downC.getContext("2d");
-
-  function setSize(cnv, w, h){ cnv.width=w; cnv.height=h; }
-
-  function clearCtx(x, w, h){
-    x.clearRect(0,0,w,h);
-    if(shared.previewBG){
-      x.save();
-      x.fillStyle="rgba(0,0,0,.35)";
-      x.fillRect(0,0,w,h);
-      x.restore();
-    }
-  }
-
-  function setupTextCtx(x, hit, scale){
-    x.font = `${hit.fontSize*scale}px "${getFontName(hit.fontKey)}"`;
-    x.textAlign = "center";
-    x.textBaseline = "alphabetic";
-  }
-
-  function renderTextMask(x, W, H, scale, hit){
-    clearCtx(x, W, H);
-
-    x.save();
-    setupTextCtx(x, hit, scale);
-    x.fillStyle = "#ffffff";
-
-    const text = hit.text ?? "";
-    const m = x.measureText(text);
-    const ascent  = (m.actualBoundingBoxAscent ?? m.fontBoundingBoxAscent ?? (hit.fontSize*0.8));
-    const descent = (m.actualBoundingBoxDescent ?? m.fontBoundingBoxDescent ?? (hit.fontSize*0.2));
-    const baselineToMiddle = (ascent - descent)/2;
-
-    // centralização travada + snapping
-    const cx = Math.round(W/2);
-    const y0 = Math.round(H/2 + baselineToMiddle);
-
-    const tracking = hit.tracking * scale;
-
-    // skew via transform (mantém centro)
-    const skew = Math.tan((hit.skewDeg || 0) * Math.PI/180);
-    x.transform(1, 0, skew, 1, 0, 0);
-
-    if(!tracking){
-      x.fillText(text, cx, y0);
-    }else{
-      const chars=[...text];
-      const widths=chars.map(ch=>x.measureText(ch).width);
-      const total=widths.reduce((a,b)=>a+b,0)+tracking*(chars.length-1);
-      let startX = cx - total/2;
-      for(let i=0;i<chars.length;i++){
-        const px = startX + widths[i]/2;
-        x.fillText(chars[i], px, y0);
-        startX += widths[i] + tracking;
-      }
-    }
-
-    x.restore();
-  }
-
-  function expandMaskTo(x, W, H, radiusPx){
-    x.save();
-    x.globalCompositeOperation = "source-over";
-    x.imageSmoothingEnabled = true;
-
-    const r = Math.max(0, Math.round(radiusPx));
-    if(r === 0){
-      x.drawImage(maskC, 0,0);
-      x.restore();
-      return;
-    }
-    for(let dy=-r; dy<=r; dy++){
-      for(let dx=-r; dx<=r; dx++){
-        if(dx*dx + dy*dy > r*r) continue;
-        x.drawImage(maskC, dx, dy);
-      }
-    }
-    x.restore();
-  }
-
-  function tintMaskTo(x, W, H, color){
-    x.save();
-    x.globalCompositeOperation = "source-in";
-    x.fillStyle = color;
-    x.fillRect(0,0,W,H);
-    x.restore();
-  }
-
-  function drawGlowFromMask(targetX, W, H, scale, hit){
-    const blur = Math.max(0, hit.glowBlur * scale);
-    if(blur <= 0) return;
-
-    targetX.save();
-    targetX.shadowBlur = blur;
-    targetX.shadowColor = hit.glowColor;
-    targetX.shadowOffsetX = 0;
-    targetX.shadowOffsetY = 0;
-
-    clearCtx(workX, W, H);
-    workX.drawImage(maskC, 0,0);
-    tintMaskTo(workX, W, H, "#ffffff");
-
-    targetX.drawImage(workC, 0,0);
-    targetX.restore();
-  }
-
-  function drawShadowFromMask(targetX, W, H, scale, hit){
-    const blur = Math.max(0, hit.shadowBlur * scale);
-    const ox = hit.shadowX * scale;
-    const oy = hit.shadowY * scale;
-    if(blur <= 0 && ox === 0 && oy === 0) return;
-
-    targetX.save();
-    targetX.shadowBlur = blur;
-    targetX.shadowColor = hit.shadowColor;
-    targetX.shadowOffsetX = ox;
-    targetX.shadowOffsetY = oy;
-
-    clearCtx(workX, W, H);
-    workX.drawImage(maskC, 0,0);
-    tintMaskTo(workX, W, H, "#ffffff");
-
-    targetX.drawImage(workC, 0,0);
-    targetX.restore();
-  }
-
-  function drawOutlineFromMask(targetX, W, H, scale, hit){
-    const outlinePx = Math.max(0, hit.strokeW * scale);
-    if(outlinePx <= 0) return;
-
-    clearCtx(workX, W, H);
-    expandMaskTo(workX, W, H, outlinePx);
-
-    workX.save();
-    workX.globalCompositeOperation = "destination-out";
-    workX.drawImage(maskC, 0,0);
-    workX.restore();
-
-    tintMaskTo(workX, W, H, hit.stroke);
-    targetX.drawImage(workC, 0,0);
-  }
-
-  function drawFillFromMask(targetX, W, H, hit){
-    clearCtx(workX, W, H);
-    workX.drawImage(maskC, 0,0);
-    tintMaskTo(workX, W, H, hit.fill);
-    targetX.drawImage(workC, 0,0);
-  }
-
-  async function renderMaster(key){
-    const hit = per[key];
-    setSize(masterC, MASTER_W, MASTER_H);
-    setSize(maskC, MASTER_W, MASTER_H);
-    setSize(workC, MASTER_W, MASTER_H);
-
-    clearCtx(masterX, MASTER_W, MASTER_H);
-
-    // mask do texto (centro travado)
-    renderTextMask(maskX, MASTER_W, MASTER_H, MASTER_SCALE, hit);
-
-    // ordem definida (mais “crisp”)
-    drawShadowFromMask(masterX, MASTER_W, MASTER_H, MASTER_SCALE, hit);
-    drawGlowFromMask(masterX, MASTER_W, MASTER_H, MASTER_SCALE, hit);
-    drawOutlineFromMask(masterX, MASTER_W, MASTER_H, MASTER_SCALE, hit);
-    drawFillFromMask(masterX, MASTER_W, MASTER_H, hit);
-
-    return masterC;
-  }
-
-  async function renderPreview(){
-    canvas.width = MASTER_W;
-    canvas.height = MASTER_H;
-
-    clearCtx(ctx, MASTER_W, MASTER_H);
-    const master = await renderMaster(active);
-    ctx.drawImage(master, 0,0);
-
-    $("whichPill").textContent = `editando: ${active}`;
-    $("fontPill").textContent = `fonte: ${getFontName(per[active].fontKey)}`;
-  }
-
-  function canvasToBlob(cnv){
-    return new Promise((resolve)=>cnv.toBlob(b=>resolve(b), "image/png"));
-  }
-
-  async function renderNormalFromMaster(master){
-    setSize(downC, BASE_W, BASE_H);
-    downX.clearRect(0,0,BASE_W,BASE_H);
-
-    downX.imageSmoothingEnabled = true;
-    downX.imageSmoothingQuality = "high";
-    downX.drawImage(master, 0,0, MASTER_W,MASTER_H, 0,0, BASE_W,BASE_H);
-
-    return downC;
-  }
-
-  function downloadBlob(blob, filename){
-    const a=document.createElement("a");
-    a.href=URL.createObjectURL(blob);
-    a.download=filename;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 200);
-  }
-
-  // ==========================================================
-  // 5) FONT LOADER (local /fonts)
+  // Local font loader
   // ==========================================================
   const loadedFonts = new Set();
   function getFontName(fontKey){
@@ -752,6 +773,8 @@
     if(loadedFonts.has(family)) return;
 
     try{
+      $("statusPill").textContent = "carregando fonte…";
+      // GH Pages friendly
       const url = `fonts/${encodeURIComponent(item.file)}`;
       const face = new FontFace(family, `url(${url})`);
       await face.load();
@@ -765,99 +788,434 @@
     }
   }
 
+  async function preloadAllFonts(){
+    // carrega todas as fontes listadas (evita lag ao trocar)
+    const jobs = FONT_LIBRARY.map((f, idx)=>ensureFontLoaded(idx));
+    await Promise.allSettled(jobs);
+    await document.fonts.ready;
+  }
+
   function buildFontSelect(){
-    const sel = $("fontSelect");
-    sel.innerHTML = "";
+    const sel=$("fontSelect");
+    sel.innerHTML="";
     FONT_LIBRARY.forEach((f, idx)=>{
-      const o = document.createElement("option");
-      o.value = String(idx);
+      const o=document.createElement("option");
+      o.value=String(idx);
       o.textContent = f.name + (f.file ? "" : " (sistema)");
       sel.appendChild(o);
     });
   }
 
   // ==========================================================
-  // 6) UI
+  // Canvas pipeline (mask -> shadow -> glow -> outline -> fill)
+  // ==========================================================
+  const canvas=$("c");
+  const ctx=canvas.getContext("2d");
+
+  const maskC=document.createElement("canvas");
+  const maskX=maskC.getContext("2d");
+
+  const workC=document.createElement("canvas");
+  const workX=workC.getContext("2d");
+
+  const masterC=document.createElement("canvas");
+  const masterX=masterC.getContext("2d");
+
+  const downC=document.createElement("canvas");
+  const downX=downC.getContext("2d");
+
+  function setSize(cnv,w,h){ cnv.width=w; cnv.height=h; }
+
+  function clearCtx(x,w,h){
+    x.clearRect(0,0,w,h);
+    if(state.previewBG){
+      x.save();
+      x.fillStyle="rgba(0,0,0,.35)";
+      x.fillRect(0,0,w,h);
+      x.restore();
+    }
+  }
+
+  function setupTextCtx(x, hitObj, scale){
+    x.font = `${hitObj.fontSize*scale}px "${getFontName(hitObj.fontKey)}"`;
+    x.textAlign="center";
+    x.textBaseline="alphabetic";
+  }
+
+  function drawTextWithTracking(x, text, cx, y0, tracking){
+    if(!tracking){
+      x.fillText(text, cx, y0);
+      return;
+    }
+    const chars=[...text];
+    const widths=chars.map(ch=>x.measureText(ch).width);
+    const total=widths.reduce((a,b)=>a+b,0)+tracking*(chars.length-1);
+    let startX = cx - total/2;
+    for(let i=0;i<chars.length;i++){
+      const px = startX + widths[i]/2;
+      x.fillText(chars[i], px, y0);
+      startX += widths[i] + tracking;
+    }
+  }
+
+  function renderTextMask(W,H,scale, hitObj){
+    clearCtx(maskX, W,H);
+    maskX.save();
+
+    setupTextCtx(maskX, hitObj, scale);
+    maskX.fillStyle="#ffffff";
+
+    const text = hitObj.text ?? "";
+    const m = maskX.measureText(text);
+    const ascent  = (m.actualBoundingBoxAscent ?? m.fontBoundingBoxAscent ?? (hitObj.fontSize*0.8));
+    const descent = (m.actualBoundingBoxDescent ?? m.fontBoundingBoxDescent ?? (hitObj.fontSize*0.2));
+    const baselineToMiddle = (ascent - descent)/2;
+
+    // centro travado + snapping
+    const cx = Math.round(W/2);
+    const y0 = Math.round(H/2 + baselineToMiddle);
+
+    // skew (mantém centro)
+    const skew = Math.tan((hitObj.skewDeg || 0) * Math.PI/180);
+    maskX.transform(1, 0, skew, 1, 0, 0);
+
+    drawTextWithTracking(maskX, text, cx, y0, hitObj.tracking*scale);
+
+    maskX.restore();
+  }
+
+  function expandMaskTo(radiusPx){
+    workX.save();
+    workX.globalCompositeOperation = "source-over";
+    workX.imageSmoothingEnabled = true;
+
+    const r = Math.max(0, Math.round(radiusPx));
+    if(r === 0){
+      workX.drawImage(maskC, 0,0);
+      workX.restore();
+      return;
+    }
+    for(let dy=-r; dy<=r; dy++){
+      for(let dx=-r; dx<=r; dx++){
+        if(dx*dx + dy*dy > r*r) continue;
+        workX.drawImage(maskC, dx, dy);
+      }
+    }
+    workX.restore();
+  }
+
+  function tintMaskTo(color){
+    workX.save();
+    workX.globalCompositeOperation="source-in";
+    workX.fillStyle=color;
+    workX.fillRect(0,0,workC.width,workC.height);
+    workX.restore();
+  }
+
+  function drawShadow(W,H,scale, hitObj){
+    const blur = Math.max(0, hitObj.shadowBlur*scale);
+    const ox = hitObj.shadowX*scale;
+    const oy = hitObj.shadowY*scale;
+    if(blur<=0 && ox===0 && oy===0) return;
+
+    masterX.save();
+    masterX.shadowBlur = blur;
+    masterX.shadowColor = hitObj.shadowColor;
+    masterX.shadowOffsetX = ox;
+    masterX.shadowOffsetY = oy;
+
+    clearCtx(workX, W,H);
+    workX.drawImage(maskC, 0,0);
+    tintMaskTo("#ffffff");
+
+    masterX.drawImage(workC, 0,0);
+    masterX.restore();
+  }
+
+  function drawGlow(W,H,scale, hitObj){
+    const blur = Math.max(0, hitObj.glowBlur*scale);
+    if(blur<=0) return;
+
+    masterX.save();
+    masterX.shadowBlur = blur;
+    masterX.shadowColor = hitObj.glowColor;
+    masterX.shadowOffsetX = 0;
+    masterX.shadowOffsetY = 0;
+
+    clearCtx(workX, W,H);
+    workX.drawImage(maskC, 0,0);
+    tintMaskTo("#ffffff");
+
+    masterX.drawImage(workC, 0,0);
+    masterX.restore();
+  }
+
+  function drawOutline(W,H,scale, hitObj){
+    const outlinePx = Math.max(0, hitObj.strokeW*scale);
+    if(outlinePx<=0) return;
+
+    clearCtx(workX, W,H);
+    expandMaskTo(outlinePx);
+
+    workX.save();
+    workX.globalCompositeOperation="destination-out";
+    workX.drawImage(maskC, 0,0);
+    workX.restore();
+
+    tintMaskTo(hitObj.stroke);
+    masterX.drawImage(workC, 0,0);
+  }
+
+  function drawFill(W,H, hitObj){
+    clearCtx(workX, W,H);
+    workX.drawImage(maskC, 0,0);
+    tintMaskTo(hitObj.fill);
+    masterX.drawImage(workC, 0,0);
+  }
+
+  async function renderMaster(key){
+    const hitObj = state.per[key];
+
+    setSize(masterC, MASTER_W, MASTER_H);
+    setSize(maskC, MASTER_W, MASTER_H);
+    setSize(workC, MASTER_W, MASTER_H);
+
+    clearCtx(masterX, MASTER_W, MASTER_H);
+
+    renderTextMask(MASTER_W, MASTER_H, MASTER_SCALE, hitObj);
+
+    // ordem “definida”
+    drawShadow(MASTER_W, MASTER_H, MASTER_SCALE, hitObj);
+    drawGlow(MASTER_W, MASTER_H, MASTER_SCALE, hitObj);
+    drawOutline(MASTER_W, MASTER_H, MASTER_SCALE, hitObj);
+    drawFill(MASTER_W, MASTER_H, hitObj);
+
+    return masterC;
+  }
+
+  async function renderPreviewNow(){
+    canvas.width = MASTER_W;
+    canvas.height = MASTER_H;
+
+    clearCtx(ctx, MASTER_W, MASTER_H);
+    const master = await renderMaster(active);
+    ctx.drawImage(master, 0,0);
+
+    $("whichPill").textContent = `editando: ${active}`;
+    $("fontPill").textContent = `fonte: ${getFontName(hit().fontKey)}`;
+    $("modePill").textContent = `normal: ${state.downscaleMode === "crisp" ? "crisp" : "suave"}`;
+  }
+  const renderPreview = debounce(renderPreviewNow, 35);
+
+  function canvasToBlob(cnv){
+    return new Promise((resolve)=>cnv.toBlob(b=>resolve(b), "image/png"));
+  }
+
+  async function renderNormalFromMaster(master){
+    setSize(downC, BASE_W, BASE_H);
+    downX.clearRect(0,0,BASE_W,BASE_H);
+
+    if(state.downscaleMode === "crisp"){
+      downX.imageSmoothingEnabled = false;
+    }else{
+      downX.imageSmoothingEnabled = true;
+      downX.imageSmoothingQuality = "high";
+    }
+
+    downX.drawImage(master, 0,0, MASTER_W,MASTER_H, 0,0, BASE_W,BASE_H);
+    return downC;
+  }
+
+  function downloadBlob(blob, filename){
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download=filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 200);
+  }
+
+  // ==========================================================
+  // UI build + sync
   // ==========================================================
   function buildTabs(){
-    const root = $("tabs");
-    root.innerHTML = "";
+    const root=$("tabs");
+    root.innerHTML="";
     for(const k of keys){
       const b=document.createElement("div");
       b.className="tab"+(k===active?" active":"");
       b.textContent=k;
       b.addEventListener("click", async ()=>{
         active = k;
-        await ensureFontLoaded(per[active].fontKey);
-        syncAllForActive();
+        await ensureFontLoaded(hit().fontKey);
+        syncAllForActive(true);
         buildTabs();
+        setUnsaved();
         renderPreview();
       });
       root.appendChild(b);
     }
   }
 
-  function syncAllForActive(){
-    const hit = per[active];
+  function syncAllForActive(render=true){
+    $("txt").value = hit().text;
 
-    $("txt").value = hit.text;
+    $("fontSelect").value = String(hit().fontKey);
+    $("fill").value = hit().fill;
+    $("stroke").value = hit().stroke;
+    $("glowColor").value = hit().glowColor;
+    $("shadowColor").value = hit().shadowColor;
 
-    $("fill").value = hit.fill;
-    $("stroke").value = hit.stroke;
-    $("shadowColor").value = hit.shadowColor;
-    $("glowColor").value = hit.glowColor;
+    syncPair("fontSize","s_fontSize","n_fontSize");
+    syncPair("tracking","s_tracking","n_tracking");
+    syncPair("skewDeg","s_skewDeg","n_skewDeg");
+    syncPair("strokeW","s_strokeW","n_strokeW");
+    syncPair("glowBlur","s_glowBlur","n_glowBlur");
+    syncPair("shadowBlur","s_shadowBlur","n_shadowBlur");
+    syncPair("shadowX","s_shadowX","n_shadowX");
+    syncPair("shadowY","s_shadowY","n_shadowY");
 
-    $("fontSelect").value = String(hit.fontKey);
-
-    syncControl("fontSize", "s_fontSize", "n_fontSize");
-    syncControl("tracking", "s_tracking", "n_tracking");
-    syncControl("skewDeg", "s_skew", "n_skew");
-    syncControl("strokeW", "s_strokeW", "n_strokeW");
-    syncControl("shadowBlur", "s_shadowBlur", "n_shadowBlur");
-    syncControl("shadowX", "s_shadowX", "n_shadowX");
-    syncControl("shadowY", "s_shadowY", "n_shadowY");
-    syncControl("glowBlur", "s_glowBlur", "n_glowBlur");
+    $("downscaleMode").value = state.downscaleMode;
+    if(render) renderPreview();
   }
 
-  // binds (sliders + numbers)
-  bindRangePair("fontSize", "s_fontSize", "n_fontSize");
-  bindRangePair("tracking", "s_tracking", "n_tracking");
-  bindRangePair("skewDeg",  "s_skew", "n_skew");
-  bindRangePair("strokeW",  "s_strokeW", "n_strokeW");
-  bindRangePair("shadowBlur","s_shadowBlur", "n_shadowBlur");
-  bindRangePair("shadowX",  "s_shadowX", "n_shadowX");
-  bindRangePair("shadowY",  "s_shadowY", "n_shadowY");
-  bindRangePair("glowBlur", "s_glowBlur", "n_glowBlur");
+  // ==========================================================
+  // Copy/paste/apply-all for hits
+  // ==========================================================
+  function copyHit(){
+    hitClipboard = deepCopy(hit());
+    toast(`Copiado (${active})`);
+  }
+  function pasteHit(){
+    if(!hitClipboard){
+      toast("Nada copiado ainda");
+      return;
+    }
+    const keepText = hit().text; // mantém texto do hit (opcional)
+    state.per[active] = { ...deepCopy(hitClipboard), text: keepText };
+    syncAllForActive(true);
+    setUnsaved();
+    toast(`Colado em ${active}`);
+  }
+  function applyToAll(){
+    const src = deepCopy(hit());
+    for(const k of keys){
+      const keepText = state.per[k].text;
+      state.per[k] = { ...deepCopy(src), text: keepText };
+    }
+    syncAllForActive(true);
+    setUnsaved();
+    toast("Aplicado para todos");
+  }
 
-  // outros inputs por hit
-  $("txt").addEventListener("input", (e)=>{
-    per[active].text = e.target.value;
-    renderPreview();
-  });
+  // ==========================================================
+  // Presets
+  // ==========================================================
+  function buildPresetSelect(){
+    const sel=$("presetSelect");
+    sel.innerHTML="";
+    const names = listPresetNames();
+    if(names.length === 0){
+      const o=document.createElement("option");
+      o.value="";
+      o.textContent="(nenhum preset)";
+      sel.appendChild(o);
+      return;
+    }
+    for(const name of names){
+      const o=document.createElement("option");
+      o.value=name;
+      o.textContent=name;
+      sel.appendChild(o);
+    }
+  }
 
-  $("fill").addEventListener("input", (e)=>{ per[active].fill = e.target.value; renderPreview(); });
-  $("stroke").addEventListener("input", (e)=>{ per[active].stroke = e.target.value; renderPreview(); });
-  $("shadowColor").addEventListener("input", (e)=>{ per[active].shadowColor = e.target.value; renderPreview(); });
-  $("glowColor").addEventListener("input", (e)=>{ per[active].glowColor = e.target.value; renderPreview(); });
+  function savePreset(){
+    const name = ($("presetName").value || "").trim();
+    if(!name){
+      toast("Dê um nome pro preset");
+      return;
+    }
+    presets[name] = deepCopy(state);
+    savePresets();
+    buildPresetSelect();
+    $("presetSelect").value = name;
+    toast("Preset salvo");
+  }
 
-  $("fontSelect").addEventListener("change", async (e)=>{
-    const idx = Number(e.target.value);
-    per[active].fontKey = Number.isFinite(idx) ? idx : 0;
-    $("statusPill").textContent = "carregando fonte…";
-    await ensureFontLoaded(per[active].fontKey);
-    await document.fonts.ready;
-    renderPreview();
-  });
+  async function loadPreset(){
+    const name = $("presetSelect").value;
+    if(!name || !presets[name]){
+      toast("Escolha um preset válido");
+      return;
+    }
+    state = deepCopy(presets[name]);
 
-  $("toggleBG").addEventListener("click", ()=>{
-    shared.previewBG = !shared.previewBG;
-    renderPreview();
-    toast(`Fundo preview: ${shared.previewBG ? "ON" : "OFF"}`);
-  });
+    // garantir estrutura (caso json antigo)
+    if(!state.per) state.per = Object.fromEntries(keys.map(k=>[k, makeDefaultsForHit(k)]));
+    for(const k of keys){
+      state.per[k] = { ...makeDefaultsForHit(k), ...(state.per[k]||{}) };
+      if(typeof state.per[k].text !== "string") state.per[k].text = k;
+    }
+    state.downscaleMode = (state.downscaleMode === "crisp") ? "crisp" : "smooth";
+    state.previewBG = !!state.previewBG;
 
-  // export
+    await preloadAllFonts();
+    buildTabs();
+    syncAllForActive(true);
+    saveState();
+    toast(`Preset carregado: ${name}`);
+  }
+
+  function deletePreset(){
+    const name = $("presetSelect").value;
+    if(!name || !presets[name]){
+      toast("Escolha um preset válido");
+      return;
+    }
+    delete presets[name];
+    savePresets();
+    buildPresetSelect();
+    toast("Preset apagado");
+  }
+
+  function exportJSON(){
+    const blob = new Blob([JSON.stringify({ presets, state }, null, 2)], { type:"application/json" });
+    downloadBlob(blob, "judgement-maker-presets.json");
+  }
+
+  async function importJSONFile(file){
+    try{
+      const txt = await file.text();
+      const obj = JSON.parse(txt);
+      if(obj.presets && typeof obj.presets === "object"){
+        presets = { ...presets, ...obj.presets };
+        savePresets();
+      }
+      if(obj.state && obj.state.per){
+        state = deepCopy(obj.state);
+        saveState();
+      }
+      await preloadAllFonts();
+      buildPresetSelect();
+      buildTabs();
+      syncAllForActive(true);
+      toast("JSON importado");
+    }catch(e){
+      toast("Falha ao importar JSON");
+    }
+  }
+
+  // ==========================================================
+  // Export
+  // ==========================================================
+  function setProgress(pct, text){
+    $("progBar").style.width = `${pct}%`;
+    $("progText").textContent = text || "—";
+  }
+
   async function exportOne(key){
-    await ensureFontLoaded(per[key].fontKey);
+    await ensureFontLoaded(state.per[key].fontKey);
     await document.fonts.ready;
 
     const master = await renderMaster(key);
@@ -865,49 +1223,148 @@
 
     const b1 = await canvasToBlob(normal);
     downloadBlob(b1, `${sanitizeName(key)}.png`);
-    await sleep(140);
+    await sleep(120);
 
     const b2 = await canvasToBlob(master);
     downloadBlob(b2, `${sanitizeName(key)}@2x.png`);
   }
 
-  $("downloadOne").addEventListener("click", async ()=>{
-    await exportOne(active);
-    toast(`Baixando ${active} + @2x…`);
-    await renderPreview();
-  });
-
-  $("exportAll").addEventListener("click", async ()=>{
-    for(const k of keys){
+  async function exportAll(){
+    setProgress(0, "Exportando…");
+    for(let i=0;i<keys.length;i++){
+      const k = keys[i];
+      setProgress(Math.round((i/keys.length)*100), `Exportando: ${k}…`);
       await exportOne(k);
-      await sleep(180);
+      await sleep(140);
     }
+    setProgress(100, "Feito ✅ (12 PNGs)");
     toast("Exportou 12 PNGs ✅");
-    await renderPreview();
+    renderPreview();
+    setTimeout(()=>setProgress(0, "—"), 1200);
+  }
+
+  // ==========================================================
+  // Reset
+  // ==========================================================
+  function resetHit(){
+    state.per[active] = makeDefaultsForHit(active);
+    syncAllForActive(true);
+    setUnsaved();
+    toast(`Reset: ${active}`);
+  }
+  function resetAll(){
+    state = {
+      previewBG:false,
+      downscaleMode:"smooth",
+      per: Object.fromEntries(keys.map(k=>[k, makeDefaultsForHit(k)])),
+    };
+    syncAllForActive(true);
+    buildTabs();
+    setUnsaved();
+    toast("Reset geral");
+  }
+
+  // ==========================================================
+  // Wire inputs
+  // ==========================================================
+  const onAnyChange = ()=>{
+    setUnsaved();
+    renderPreview();
+  };
+
+  // pairs
+  bindPair("fontSize","s_fontSize","n_fontSize", onAnyChange);
+  bindPair("tracking","s_tracking","n_tracking", onAnyChange);
+  bindPair("skewDeg","s_skewDeg","n_skewDeg", onAnyChange);
+  bindPair("strokeW","s_strokeW","n_strokeW", onAnyChange);
+  bindPair("glowBlur","s_glowBlur","n_glowBlur", onAnyChange);
+  bindPair("shadowBlur","s_shadowBlur","n_shadowBlur", onAnyChange);
+  bindPair("shadowX","s_shadowX","n_shadowX", onAnyChange);
+  bindPair("shadowY","s_shadowY","n_shadowY", onAnyChange);
+
+  $("txt").addEventListener("input", (e)=>{ hit().text = e.target.value; onAnyChange(); });
+
+  $("fill").addEventListener("input", (e)=>{ hit().fill = e.target.value; onAnyChange(); });
+  $("stroke").addEventListener("input", (e)=>{ hit().stroke = e.target.value; onAnyChange(); });
+  $("glowColor").addEventListener("input", (e)=>{ hit().glowColor = e.target.value; onAnyChange(); });
+  $("shadowColor").addEventListener("input", (e)=>{ hit().shadowColor = e.target.value; onAnyChange(); });
+
+  $("downscaleMode").addEventListener("change", (e)=>{
+    state.downscaleMode = (e.target.value === "crisp") ? "crisp" : "smooth";
+    onAnyChange();
   });
 
-  $("reset").addEventListener("click", async ()=>{
-    for(const k of keys) per[k] = makeDefaultsForHit(k);
-    active = "300";
-    buildTabs();
-    buildFontSelect();
-    await ensureFontLoaded(per[active].fontKey);
-    syncAllForActive();
-    $("statusPill").textContent = "reset";
-    toast("Reset feito");
-    await renderPreview();
+  $("toggleBG").addEventListener("click", ()=>{
+    state.previewBG = !state.previewBG;
+    onAnyChange();
+    toast(`Fundo: ${state.previewBG ? "ON" : "OFF"}`);
   });
 
-  // init
-  (async function init(){
-    buildTabs();
-    buildFontSelect();
-    await ensureFontLoaded(per[active].fontKey);
-    syncAllForActive();
+  $("fontSelect").addEventListener("change", async (e)=>{
+    hit().fontKey = Number(e.target.value) || 0;
+    $("statusPill").textContent = "carregando fonte…";
+    await ensureFontLoaded(hit().fontKey);
     await document.fonts.ready;
-    await renderPreview();
+    onAnyChange();
+  });
+
+  // hit tools
+  $("copyHit").addEventListener("click", copyHit);
+  $("pasteHit").addEventListener("click", pasteHit);
+  $("applyAll").addEventListener("click", applyToAll);
+
+  // export
+  $("downloadOne").addEventListener("click", async ()=>{
+    setProgress(10, `Exportando: ${active}…`);
+    await exportOne(active);
+    setProgress(100, `Feito: ${active} ✅`);
+    toast(`Baixando ${active} + @2x…`);
+    renderPreview();
+    setTimeout(()=>setProgress(0, "—"), 900);
+  });
+  $("exportAll").addEventListener("click", exportAll);
+
+  // reset
+  $("resetHit").addEventListener("click", resetHit);
+  $("resetAll").addEventListener("click", resetAll);
+
+  // presets
+  $("savePreset").addEventListener("click", savePreset);
+  $("loadPreset").addEventListener("click", loadPreset);
+  $("deletePreset").addEventListener("click", deletePreset);
+  $("exportJSON").addEventListener("click", exportJSON);
+  $("importJSON").addEventListener("change", async (e)=>{
+    const f = e.target.files?.[0];
+    if(!f) return;
+    await importJSONFile(f);
+    e.target.value = "";
+  });
+
+  // ==========================================================
+  // Init
+  // ==========================================================
+  async function init(){
+    loadState();
+    loadPresets();
+
+    buildTabs();
+    buildFontSelect();
+    buildPresetSelect();
+
+    $("downscaleMode").value = state.downscaleMode;
+
+    // preload fonts (se tiver)
+    await preloadAllFonts();
+    await ensureFontLoaded(hit().fontKey);
+
+    syncAllForActive(true);
+    saveState(); // garante estrutura salva
+
     toast("Pronto ✅");
-  })();
+    setProgress(0, "—");
+  }
+
+  init();
 </script>
 </body>
 </html>
